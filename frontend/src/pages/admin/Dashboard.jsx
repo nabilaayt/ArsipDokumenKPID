@@ -1,29 +1,31 @@
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { NavLink } from "react-router-dom";
+import SideBar from "../../components/SideBar";
+import Topbar from "../../components/TopBar";
 
 export default function Dashboard() {
     return(
         <section id="adminDashboard" className="font-poppins bg-babyBlue relative w-full flex min-h-screen overflow-hidden">
             <div className="h-auto">
-
+                <SideBar />
             </div>
             <div className="flex flex-col flex-1 overflow-y-auto max-h-screen">
-
+                <Topbar />
                 <div className="flex-1">
-                    <div className="flex flex-col gap-4 items-center mb-5">
-                        <div className="flex flex-col gap-6 mb-10">
-                            <h1 className="text-gray-950 text-3xl font-semibold">Halo, selamat datang kembali Admin</h1>
+                    <div className="flex flex-col px-4 sm:px-6 lg:px-8 gap-4 mt-14 mb-5">
+                        <div className="flex flex-col gap-4 mb-8">
+                            <h1 className="text-gray-950 text-2xl font-semibold">Halo, selamat datang kembali Admin</h1>
                             <p className="text-gray-500 text-lg leading-relaxed">Selamat datang di arsip dokumen Komisi Penyiaran Daerah Sumatera Selatan</p>
                         </div>
 
-                        <div className="flex flex-row gap-10 mb-10">
+                        <div className="flex flex-col sm:flex-row gap-5 sm:gap-10 mb-10">
                             <div className="flex flex-row gap-5 bg-white p-8 rounded-2xl">
                                 <img 
                                     src="/assets/icons/TotalDokumen.png" 
                                     alt="Icon Total Dokumen" 
                                     className="w-16 h-16"
                                 />
-                                <div className="flex flex-col gap-4">
+                                <div className="flex flex-col gap-3">
                                     <h3 className="text-xl font-medium text-gray-950">20 Dokumen</h3>
                                     <p className="text-gray-500 text-lg">Total Dokumen</p>
                                 </div>
@@ -34,7 +36,7 @@ export default function Dashboard() {
                                     alt="Icon Total Dokumen" 
                                     className="w-16 h-16"
                                 />
-                                <div className="flex flex-col gap-4">
+                                <div className="flex flex-col gap-3">
                                     <h3 className="text-xl font-medium text-gray-950">20 Dokumen</h3>
                                     <p className="text-gray-500 text-lg">Total Dokumen Prioritas Tinggi</p>
                                 </div>
@@ -43,7 +45,7 @@ export default function Dashboard() {
 
                         <div className="flex flex-col gap-8">
                             <div className="flex flex-row justify-between items-center ">
-                                <h1 className="text-3xl text-gray-950 font-semibold">Dokumen Terbaru</h1>
+                                <h1 className="text-2xl text-gray-950 font-semibold">Dokumen Terbaru</h1>
                                 <div className="flex flex-row gap-2 items-center group cursor-pointer">
                                     <NavLink 
                                         to="/admin/dokumen"
@@ -58,7 +60,6 @@ export default function Dashboard() {
                                 </div>
                             </div>
                         </div>
-
 
                     </div>
                 </div>
