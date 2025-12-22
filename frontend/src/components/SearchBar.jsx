@@ -38,12 +38,12 @@ export default function SearchBar({ onSearch }) {
                         handleSearch();
                     }
                 }}
-                className={`flex-1 h-full text-lg outline-none border-none overflow-x-auto whitespace-nowrap pr-14 transition duration-300 ${searchInput ? "text-gray-950" : "text-gray-500"}`}
+                className={`flex-1 h-full text-lg outline-none border-none overflow-x-auto whitespace-nowrap pr-14 transition duration-300 ${searchInput ? "text-gray-700" : "text-gray-500"}`}
             />
             {handleSearch && (
                 <button
                     onClick={handleClear}
-                    className="absolute right-4 sm:right-6 text-gray-500 hover:text-gray-950 cursor-pointer"
+                    className="absolute right-4 sm:right-6 text-gray-500 hover:text-gray-700 cursor-pointer"
                 >
                     <TbX size={24} />
                 </button>

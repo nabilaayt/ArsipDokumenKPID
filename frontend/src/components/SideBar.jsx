@@ -27,7 +27,7 @@ export default function SideBar() {
 
     const renderNavSection = (title, items) => (
         <div className=" flex flex-col gap-2">
-            {open && <h4 className="text-gray-800 text-base font-medium px-2">{title}</h4>}
+            {open && <h4 className="text-gray-700 text-base font-medium px-2">{title}</h4>}
             <ul className="flex flex-col gap-2">
                 {items.map((item, idx) => (
                     <li key={idx}>
@@ -35,9 +35,9 @@ export default function SideBar() {
                             to={item.path}
                             onClick={() => setMobileOpen(false)}
                             className={({ isActive }) =>
-                                `flex items-center gap-4 text-lg transition-all duration-200 ${
-                                isActive ? "text-gray-950" : "text-gray-500 hover:text-gray-950 hover:bg-babyBlue hover:font-medium"
-                                } ${open ? "px-2 py-2" : "justify-center p-2"}`                                
+                                `flex items-center gap-5 text-lg transition-all duration-200 ${
+                                isActive ? "bg-babyBlue text-gray-700 font-medium" : "text-gray-500 hover:bg-babyBlue hover:text-gray-700 hover:font-medium"
+                                } ${open ? "px-3 py-2 rounded-lg" : "justify-center p-3"}`                                
                             }
                         >
                             {item.icon}
@@ -49,7 +49,6 @@ export default function SideBar() {
         </div>
     );
 
-
     return(
         <>
             {/* Menu Button for Mobile */}
@@ -60,10 +59,10 @@ export default function SideBar() {
                         alt="Logo KPID" 
                         className="w-15 h-15 sm:w-16 sm:h-16 transition-transform duration-300 hover:scale-110"
                     />
-                    <h1 className="text-heading text-2xl font-bold">KPID SUMSEL</h1>
+                    <h1 className="text-heading text-2xl font-bold text-gray-700">KPID SUMSEL</h1>
                 </div>
                 <button
-                    className="text-heading px-4"
+                    className="text-heading px-1"
                     onClick={() => setMobileOpen(!mobileOpen)}
                 >
                     <HiMenuAlt3 size={24} />
@@ -92,7 +91,7 @@ export default function SideBar() {
                 </div>
                 <button 
                     onClick={handleLogout}
-                    className={`flex items-center py-2 px-2 cursor-pointer gap-4 mb-4 text-gray-500 hover:text-gray-950 hover:bg-babyBlue text-lg hover:font-medium transition-all duration-300 ${open ? "items-start px-6" : "items-center justify-center"}`}
+                    className={`flex items-center py-2 px-2 cursor-pointer gap-4 mb-4 text-gray-500 hover:text-gray-700 hover:bg-babyBlue text-lg hover:font-medium transition-all duration-300 ${open ? "items-start px-6" : "items-center justify-center"}`}
                 >
                     <IoLogOutOutline size="26"/>
                     <span className={`${!open && "hidden"} transition-colors`}>Logout</span>
