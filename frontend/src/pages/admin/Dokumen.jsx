@@ -1,5 +1,4 @@
 import { NavLink } from "react-router-dom";
-import DropDownKlasifikasi from "../../components/dokumen/DropDownKlasifikasi";
 import DropDownPrioritas from "../../components/dokumen/DropDownPrioritas";
 import DropDownWaktu from "../../components/dokumen/DropDownWaktu";
 import SideBar from "../../components/SideBar";
@@ -21,7 +20,6 @@ export default function Dokumen() {
                         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
                             <h1 className="text-gray-950 text-2xl font-semibold">Dokumen</h1>
                             <div className="flex flex-col sm:flex-row w-full lg:w-auto gap-5">
-                                <DropDownKlasifikasi />
                                 <DropDownPrioritas />
                                 <DropDownWaktu />
                                 <div className="flex flex-row gap-3 w-full items-center justify-center text-white px-4 py-2 rounded-xl bg-red hover:scale-[1.02] transition-transform cursor-pointer">
