@@ -28,7 +28,7 @@ export default function DropDownPrioritas() {
                 <div className="relative">
                     <div 
                         onClick={() => setIsDropdownVisible(!isDropdownVisible)}
-                        className="bg-white gap-2 px-2 sm:px-4 py-1 sm:py-2 text-lg rounded-xl w-full flex items-center text-heading justify-between cursor-pointer select-none"
+                        className="bg-white gap-2 px-2 sm:px-4 py-2 sm:py-2 text-lg rounded-xl w-full flex items-center text-heading justify-between cursor-pointer select-none"
                     >
                         <span
                             className={`transition-colors duration-200 ${

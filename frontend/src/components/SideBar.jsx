@@ -57,7 +57,7 @@ export default function SideBar() {
                     <img 
                         src="/assets/logo/logoKPID.png" 
                         alt="Logo KPID" 
-                        className="w-15 h-15 sm:w-16 sm:h-16 transition-transform duration-300 hover:scale-110"
+                        className="w-12 h-12 sm:w-14 sm:h-14 transition-transform duration-300 hover:scale-110"
                     />
                     <h1 className="text-heading text-2xl font-bold text-gray-700">KPID SUMSEL</h1>
                 </div>
