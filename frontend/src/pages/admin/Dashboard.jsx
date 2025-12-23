@@ -12,7 +12,7 @@ export default function Dashboard() {
             <div className="flex flex-col flex-1 overflow-y-auto max-h-screen">
                 <Topbar />
                 <div className="flex-1">
-                    <div className="flex flex-col px-4 sm:px-6 lg:px-8 gap-4 mt-14 mb-5">
+                    <div className="flex flex-col px-4 sm:px-6 lg:px-10 gap-4 mt-8 mb-5">
                         <div className="flex flex-col gap-4 mb-8">
                             <h1 className="text-gray-700 text-2xl font-semibold">Halo, selamat datang kembali Admin</h1>
                             <p className="text-gray-500 text-lg leading-relaxed">Selamat datang di arsip dokumen Komisi Penyiaran Daerah Sumatera Selatan</p>

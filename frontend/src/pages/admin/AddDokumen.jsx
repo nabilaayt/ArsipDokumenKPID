@@ -67,12 +67,12 @@ export default function AddDokumen() {
             <div className="flex flex-col flex-1 overflow-y-auto max-h-screen">
                 <Topbar />
                 <div className="flex-1 px-4 sm:px-6 lg:px-10">
-                    <div className="flex flex-col w-full relative max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl rounded-2xl p-6 sm:p-8 md:p-10 bg-white gap-10 z-10 mb-5 mt-14">
+                    <div className="flex flex-col w-full relative rounded-2xl p-6 sm:p-8 md:p-10 bg-white gap-10 z-10 mb-5 mt-10">
                         <div className="flex flex-col gap-4">
                             <h1 className="text-2xl text-gray-700 font-bold">Tambah Dokumen</h1>
                             <p className="text-lg text-gray-500">Lengkapi data dokumen agar dapat dicatat dan diarsipkan ke dalam sistem.</p>
                         </div>
-                        <form onSubmit="" className="flex flex-col sm:flex-row gap-8 justify-between">
+                        <form onSubmit="" className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             <div className="flex flex-col gap-6">
                                 <div className="flex flex-col gap-3 w-full">
                                     <label htmlFor="noDokumen" className="text-lg font-medium text-gray-700">Nomor Dokumen</label>
@@ -82,7 +82,7 @@ export default function AddDokumen() {
                                             // value={form.title}
                                             // onChange={handleChange}
                                             placeholder="Masukkan nomor dokumen"
-                                            className="w-full rounded-full px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-2 focus:ring-black"
+                                            className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
@@ -93,7 +93,7 @@ export default function AddDokumen() {
                                             // value={form.title}
                                             // onChange={handleChange}
                                             placeholder="Masukkan asal dokumen"
-                                            className="w-full rounded-full px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-2 focus:ring-black"
+                                            className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
@@ -104,7 +104,7 @@ export default function AddDokumen() {
                                             // value={form.title}
                                             // onChange={handleChange}
                                             placeholder="Masukkan perihal dokumen"
-                                            className="w-full rounded-full px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-2 focus:ring-black"
+                                            className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
@@ -115,7 +115,7 @@ export default function AddDokumen() {
                                             // value={form.title}
                                             // onChange={handleChange}
                                             placeholder="Masukkan prioritas dokumen"
-                                            className="w-full rounded-full px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-2 focus:ring-black"
+                                            className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
                                 </div>
                             </div>
@@ -129,7 +129,7 @@ export default function AddDokumen() {
                                             // value={form.title}
                                             // onChange={handleChange}
                                             placeholder="Masukkan tanggal dokumen"
-                                            className="w-full rounded-full px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-2 focus:ring-black"
+                                            className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
@@ -140,16 +140,16 @@ export default function AddDokumen() {
                                             // value={form.title}
                                             // onChange={handleChange}
                                             placeholder="Masukkan tanggal dokumen"
-                                            className="w-full rounded-full px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-2 focus:ring-black"
+                                            className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
                                     <label htmlFor="fileUrl" className="text-lg font-medium text-heading">Unggah Dokumen</label>
-                                    <label htmlFor="fileUrl"  className="relative flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-600 rounded-2xl cursor-pointer hover:border-gray-700 transition-colors bg-white">
-                                        <div className="flex flex-col items-center justify-center gap-3 py-5">
-                                            <SlCloudUpload className="w-12 h-12 text-gray-700" strokeWidth={1} />
+                                    <label htmlFor="fileUrl"  className="relative flex flex-col items-center justify-center w-full h-42 bg-babyBlue border-2 border-dashed border-gray-700 rounded-2xl cursor-pointer hover:border-gray-700 transition-colors">
+                                        <div className="flex flex-col items-center justify-center gap-3 py-6">
+                                            <SlCloudUpload size= "40" style={{ strokeWidth: 1.5 }} />
                                             <div className="text-center px-4">
-                                                <p className="text-base text-gray-700 font-medium">
+                                                <p className="text-base text-gray-600 font-medium">
                                                     Klik atau seret file Anda ke sini.
                                                 </p>
                                                 <p className="text-sm text-gray-500 mt-1">
@@ -176,6 +176,20 @@ export default function AddDokumen() {
                                         </div>
                                     )} */}
                                 </div>
+                            </div>
+                            <div className="flex flex-row w-full gap-5 items-center mt-6">
+                                <button
+                                    type="submit"
+                                    className="bg-red text-white text-lg font-medium rounded-2xl px-5 py-3 w-full hover:scale-[1.02] transition-transform cursor-pointer"
+                                >
+                                    Simpan
+                                </button>
+                                <NavLink
+                                    to="/admin/dokumen"
+                                    className="bg-babyBlue text-center text-lg font-medium w-full text-gray-700 px-5 py-3 rounded-2xl hover:scale-[1.02] transition-transform cursor-pointer"
+                                >
+                                    Batal
+                                </NavLink>
                             </div>
                         </form>
                     </div>
