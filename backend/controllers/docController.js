@@ -1,12 +1,52 @@
 const db = require('../config/db');
 const response = require('../response');
 
-// 1. Ambil Semua Dokumen
+// --- 1. AMBIL SEMUA DOKUMEN (Dengan Search & Filter) ---
 exports.getDokumen = (req, res) => {
-    const sql = "SELECT * FROM dokumen ORDER BY id DESC";
-    db.query(sql, (err, result) => {
-        if (err) return response(500, err.message, "Internal Error", res);
-        response(200, result, "Daftar semua dokumen berhasil dimuat", res);
+    const { prioritas, bulan, tahun, search } = req.query;
+    
+    let sql = `
+        SELECT id, nomor_dokumen, asal_dokumen, perihal, prioritas, file_url,
+        DATE_FORMAT(tanggal_dokumen, '%d-%m-%Y') AS tanggal_dokumen, 
+        DATE_FORMAT(tanggal_diterima, '%d-%m-%Y') AS tanggal_diterima 
+        FROM dokumen WHERE 1=1
+    `;
+    let params = [];
+
+    if (prioritas) {
+        sql += " AND prioritas = ?";
+        params.push(prioritas);
+    }
+
+    if (bulan && tahun) {
+        sql += " AND MONTH(tanggal_dokumen) = ? AND YEAR(tanggal_dokumen) = ?";
+        params.push(bulan, tahun);
+    } else if (tahun) {
+        sql += " AND YEAR(tanggal_dokumen) = ?";
+        params.push(tahun);
+    }
+
+    if (search) {
+        sql += ` AND (
+            nomor_dokumen LIKE ? OR 
+            perihal LIKE ? OR 
+            asal_dokumen LIKE ? OR 
+            prioritas LIKE ?
+        )`;
+        const searchTerm = `%${search}%`;
+        params.push(searchTerm, searchTerm, searchTerm, searchTerm);
+    }
+
+    sql += " ORDER BY id DESC";
+
+    db.query(sql, params, (err, fields) => {
+        if (err) return response(500, err.message, "Database Error", res);
+        
+        if (fields.length > 0) {
+            response(200, fields, "Berhasil mengambil dokumen", res);
+        } else {
+            response(404, [], "Data tidak ditemukan", res);
+        }
     });
 };
 

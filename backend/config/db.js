@@ -4,7 +4,7 @@ const db = mysql.createPool({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'kpid_sumsel', // PASTIKAN TERTULIS 'kpid_arsip' (dengan huruf P di akhir)
+    database: 'kpid', // PASTIKAN TERTULIS 'kpid_arsip' (dengan huruf P di akhir)
     connectionLimit: 10
 });
 
