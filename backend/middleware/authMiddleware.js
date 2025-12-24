@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const response = require('../response');
-const SECRET_KEY = 'kpid_sumsel_secret';
+
+// Mengambil secret key dari .env
+const SECRET_KEY = process.env.JWT_SECRET;
 
 exports.verifyAdmin = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -11,12 +13,11 @@ exports.verifyAdmin = (req, res, next) => {
     jwt.verify(token, SECRET_KEY, (err, decoded) => {
         if (err) return response(403, null, "Sesi berakhir atau token tidak valid", res);
         
-        // Cek Role: Hanya 'admin' yang boleh lanjut
         if (decoded.role !== 'admin') {
             return response(403, null, "Akses Terbatas: Role 'user' tidak diizinkan melakukan ini", res);
         }
         
         req.user = decoded;
-        next(); // Lanjut ke controller
+        next();
     });
 };

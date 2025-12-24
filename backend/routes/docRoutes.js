@@ -8,14 +8,22 @@ const { verifyAdmin } = require('../middleware/authMiddleware');
 // Akses User & Admin
 router.get('/dokumen', docController.getDokumen);
 router.get('/stats', docController.getStats);
+
+// Route Download File
 router.get('/download/:filename', (req, res) => {
-    const filePath = path.resolve(__dirname, '../uploads', req.params.filename);
+    // Pastikan folder sesuai dengan struktur (backend/upload)
+    const filePath = path.join(__dirname, '../upload', req.params.filename);
+    
     res.download(filePath, (err) => {
-        if (err && !res.headersSent) res.status(404).json({ message: "File tidak ditemukan" });
+        if (err) {
+            if (!res.headersSent) {
+                res.status(404).json({ message: "File tidak ditemukan di server" });
+            }
+        }
     });
 });
 
-// Akses Admin Only
+// Akses Admin Only (Butuh Token & Role Admin)
 router.post('/dokumen', verifyAdmin, upload.single('file'), docController.addDokumen);
 router.put('/dokumen/:id', verifyAdmin, upload.single('file'), docController.updateDokumen);
 router.delete('/dokumen/:id', verifyAdmin, docController.deleteDokumen);
