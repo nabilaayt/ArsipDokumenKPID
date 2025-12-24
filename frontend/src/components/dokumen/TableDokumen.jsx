@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
+=======
+import { useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+>>>>>>> b8fa205e85b9ff46fee44ccb7cb201701563a1b9
 import toast from "react-hot-toast";
 import { FiEdit } from "react-icons/fi";
 import { PiTrashSimple } from "react-icons/pi";
@@ -8,8 +13,14 @@ import { getDokumen } from "../../services/api"; // Pastikan path ini benar
 
 export default function TableDokumen() {
     const [rowsPerPage, setRowsPerPage] = useState(10);
+<<<<<<< HEAD
     const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(true);
+=======
+    const location = useLocation();
+    const isAdmin = location.pathname.startsWith("/admin");
+    // const { data: courses, deleteCourse, error } = useCourse();
+>>>>>>> b8fa205e85b9ff46fee44ccb7cb201701563a1b9
 
     // 1. Ambil data dari Backend saat komponen dimuat
     useEffect(() => {
@@ -94,6 +105,7 @@ export default function TableDokumen() {
                                     </span>
                                 </td>
                                 <td className="py-4 px-4 whitespace-nowrap text-lg flex flex-row gap-3 text-gray-600">
+<<<<<<< HEAD
                                     {/* Tombol Download */}
                                     <button 
                                         onClick={() => handleDownload(doc.file_url)}
@@ -117,6 +129,37 @@ export default function TableDokumen() {
                                     >
                                         <PiTrashSimple size="24" />
                                     </button>
+=======
+                                     <button 
+                                        // onClick={() => handleDownload(doc)}
+                                        className="bg-babyBlue p-2 rounded-lg hover:bg-lime-600 hover:text-white"
+                                    >
+                                        <RxDownload size= "24" />
+                                    </button>
+                                    {isAdmin && (
+                                        <>
+                                            <button className="bg-babyBlue p-2 rounded-lg hover:bg-orange-300 hover:text-white">
+                                                <NavLink
+                                                    to={`/admin/editDokumen/${doc.id}`}
+                                                >
+                                                    <FiEdit size= "24" style={{ strokeWidth: 1.5 }} />
+                                                </NavLink>
+                                            </button>    
+                                            <button 
+                                                // onClick={() => {
+                                                //     if (confirm("Apakah Anda yakin ingin menghapus dokumen ini?")) {
+                                                //         deleteDokumen(doc.id)
+                                                //         .then(() => toast.success("Dokumen berhasil dihapus!"))
+                                                //         .catch(() => toast.error("Gagal menghapus dokumen"));
+                                                //     }
+                                                // }}
+                                                className="bg-babyBlue p-2 rounded-lg cursor-pointer hover:bg-red hover:text-white"
+                                            >
+                                                <PiTrashSimple size= "24" />
+                                            </button>                              
+                                        </>
+                                    )}
+>>>>>>> b8fa205e85b9ff46fee44ccb7cb201701563a1b9
                                 </td>
                             </tr>
                         ))}
