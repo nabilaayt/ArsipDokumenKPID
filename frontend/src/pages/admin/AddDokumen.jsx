@@ -153,7 +153,7 @@ export default function AddDokumen() {
                                                     Klik atau seret file Anda ke sini.
                                                 </p>
                                                 <p className="text-sm text-gray-500 mt-1">
-                                                    docx dan pdf - hingga 200MB
+                                                    .doc, .docx dan pdf - hingga 200MB
                                                 </p>
                                             </div>
                                         </div>
