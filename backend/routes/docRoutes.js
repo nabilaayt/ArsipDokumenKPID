@@ -28,4 +28,8 @@ router.post('/dokumen', verifyAdmin, upload.single('file'), docController.addDok
 router.put('/dokumen/:id', verifyAdmin, upload.single('file'), docController.updateDokumen);
 router.delete('/dokumen/:id', verifyAdmin, docController.deleteDokumen);
 
+// Convert
+router.post('/konversi/word-to-pdf', upload.single('file'), docController.wordToPdf);
+router.post('/konversi/pdf-to-word', upload.single('file'), docController.pdfToWord);
+
 module.exports = router;
