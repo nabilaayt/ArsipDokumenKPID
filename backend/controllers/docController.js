@@ -107,3 +107,146 @@ exports.deleteDokumen = (req, res) => {
         response(200, result, "Dokumen berhasil dihapus", res);
     });
 };
+
+
+
+
+
+// word to pdf
+const { exec } = require('child_process');
+const path = require('path');
+const fs = require('fs');
+
+exports.wordToPdf = async (req, res) => {
+    try {
+        if (!req.file) return response(400, null, "File tidak ada", res);
+
+        const inputPath = path.resolve(req.file.path);
+        const outputDir = path.resolve(__dirname, '../uploads/');
+        const outputName = `hasil-${Date.now()}.pdf`;
+        const outputPath = path.join(outputDir, outputName);
+
+        // Path ini harus benar-benar ada di laptop kamu
+        const sofficePath = `"C:\\Program Files\\LibreOffice\\program\\soffice.exe"`;
+
+        console.log("proses Konversi");
+
+        // Perintah sakti langsung ke sistem
+        const cmd = `${sofficePath} --headless --convert-to pdf --outdir "${outputDir}" "${inputPath}"`;
+
+        exec(cmd, (error) => {
+            if (error) {
+                console.error("Error LibreOffice:", error);
+                return response(500, "Mesin konversi gagal. Cek folder LibreOffice.", res);
+            }
+
+            // Cari file yang baru dibuat oleh LibreOffice
+            const fileNameOnly = path.basename(inputPath, path.extname(inputPath)) + ".pdf";
+            const resultFile = path.join(outputDir, fileNameOnly);
+
+            if (fs.existsSync(resultFile)) {
+                fs.renameSync(resultFile, outputPath); // Ubah nama ke yang unik
+                fs.unlinkSync(inputPath); // Hapus word asli
+
+                return response(200, {
+                    url_download: `http://localhost:3000/uploads/${outputName}`
+                }, "BERHASIL.", res);
+            } else {
+                return response(500, "File PDF tidak ditemukan setelah konversi.", res);
+            }
+        });
+
+    } catch (err) {
+        console.error("Crash dicegah:", err);
+        return response(500, "Terjadi kesalahan sistem.", res);
+    }
+};
+
+
+
+
+// --- WORD TO PDF (Auto Delete 1 Jam) ---
+exports.wordToPdf = async (req, res) => {
+    try {
+        if (!req.file) return response(400, null, "File tidak ada", res);
+
+        const inputPath = path.resolve(req.file.path);
+        const outputDir = path.resolve(__dirname, '../uploads/');
+        const outputName = `hasil-${Date.now()}.pdf`;
+        const outputPath = path.join(outputDir, outputName);
+        const sofficePath = `"C:\\Program Files\\LibreOffice\\program\\soffice.exe"`;
+
+        const cmd = `${sofficePath} --headless --convert-to pdf --outdir "${outputDir}" "${inputPath}"`;
+
+        exec(cmd, (error) => {
+            if (error) return response(500, "Gagal konversi.", res);
+
+            const tempFile = path.join(outputDir, path.basename(inputPath, path.extname(inputPath)) + ".pdf");
+
+            if (fs.existsSync(tempFile)) {
+                fs.renameSync(tempFile, outputPath);
+                if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
+
+                // BALAS KE USER DULU
+                response(200, { url_download: `http://localhost:3000/uploads/${outputName}` }, "BERHASIL", res);
+
+                // JALANKAN PEMBERSIHAN OTOMATIS (1 JAM KEMUDIAN)
+                setTimeout(() => {
+                    if (fs.existsSync(outputPath)) {
+                        fs.unlinkSync(outputPath);
+                        console.log(`File sampah ${outputName} berhasil dihapus otomatis (1 jam berlalu).`);
+                    }
+                }, 3600000); // 3.600.000 ms = 1 jam
+
+            } else {
+                return response(500, "File tidak ditemukan.", res);
+            }
+        });
+    } catch (err) {
+        return response(500, "Kesalahan sistem.", res);
+    }
+};
+
+// --- PDF TO WORD (Auto Delete 1 Jam) ---
+exports.pdfToWord = async (req, res) => {
+    try {
+        if (!req.file) return response(400, null, "File tidak ada", res);
+
+        const inputPath = path.resolve(req.file.path);
+        const outputDir = path.resolve(__dirname, '../uploads/');
+        const baseName = path.basename(inputPath, path.extname(inputPath));
+        const tempFilePath = path.join(outputDir, `${baseName}.docx`);
+        const finalName = `hasil-${Date.now()}.docx`;
+        const finalPath = path.join(outputDir, finalName);
+        const soffice = `"C:\\Program Files\\LibreOffice\\program\\soffice.exe"`;
+
+        const cmd = `${soffice} --headless --infilter="writer_pdf_import" --convert-to docx --outdir "${outputDir}" "${inputPath}"`;
+        
+        exec(cmd, (err) => {
+            if (err) return response(500, null, "Gagal di sistem", res);
+
+            setTimeout(() => {
+                if (fs.existsSync(tempFilePath)) {
+                    fs.renameSync(tempFilePath, finalPath);
+                    if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
+
+                    // BALAS KE USER DULU
+                    response(200, { url_download: `http://localhost:3000/uploads/${finalName}` }, "BERHASIL", res);
+
+                    // JALANKAN PEMBERSIHAN OTOMATIS (1 JAM KEMUDIAN)
+                    setTimeout(() => {
+                        if (fs.existsSync(finalPath)) {
+                            fs.unlinkSync(finalPath);
+                            console.log(`File sampah ${finalName} berhasil dihapus otomatis (1 jam berlalu).`);
+                        }
+                    }, 3600000); // 1 jam
+
+                } else {
+                    return response(500, null, "File gagal dibuat.", res);
+                }
+            }, 3000);
+        });
+    } catch (e) {
+        return response(500, e.message, "Error", res);
+    }
+};
