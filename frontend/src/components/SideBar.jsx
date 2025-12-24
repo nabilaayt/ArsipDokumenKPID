@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { RxDashboard } from "react-icons/rx";
 import { IoDocumentsOutline } from "react-icons/io5";
 import { VscGoToFile } from "react-icons/vsc";
@@ -10,6 +10,13 @@ export default function SideBar() {
     const [open, setOpen] = useState(true);
     const [mobileOpen, setMobileOpen] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const isAdmin = location.pathname.startsWith("/admin");
+    const isUser = location.pathname.startsWith("/user");
+    const konversiPath = isAdmin 
+        ? "/admin/konversiFile" :
+        isUser ? "/user/konversiFile" : "/";
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -21,8 +28,13 @@ export default function SideBar() {
         { name: "Dokumen", path: "/admin/dokumen", icon: <IoDocumentsOutline size={24} /> },
     ];
 
+    const userPages = [
+        { name: "Dashboard", path: "/user/dashboard", icon: <RxDashboard size={24} /> },
+        { name: "Dokumen", path: "/user/dokumen", icon: <IoDocumentsOutline size={24} /> },
+    ];
+
     const otherPages = [
-        { name: "Konversi File", path: "/konversiFile", icon: <VscGoToFile size={24} /> },
+        { name: "Konversi File", path: konversiPath, icon: <VscGoToFile size={24} /> },
     ];
 
     const renderNavSection = (title, items) => (
@@ -86,7 +98,8 @@ export default function SideBar() {
                         KPID SUMSEL
                         </h1>
                     </div>
-                    {renderNavSection("Menu", adminPages)}
+                    {isAdmin && renderNavSection("Menu", adminPages)}
+                    {isUser && renderNavSection("Menu", userPages)}
                     {renderNavSection("Lainnya", otherPages)}
                 </div>
                 <button 

@@ -112,9 +112,13 @@ export default function KonversiFile() {
                                             <div key={file.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-babyBlue rounded-xl px-4 sm:px-5 py-4">
                                                 <div className="flex items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
                                                     <img 
-                                                        src="/assets/pdf.png" 
-                                                        alt="file" 
-                                                        className="w-7 h-full"
+                                                        src={
+                                                            activeType === "wordToPdf"
+                                                                ? "/assets/pdf.png"
+                                                                : "/assets/docx.png"
+                                                        }
+                                                        alt="file"
+                                                        className="w-7 h-full shrink-0"
                                                     />
                                                     <p className="text-gray-700 font-medium wrap-break-word">{file.name}</p>
                                                 </div>

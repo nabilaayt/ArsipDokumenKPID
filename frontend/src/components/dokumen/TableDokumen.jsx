@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FiEdit } from "react-icons/fi";
 import { PiTrashSimple } from "react-icons/pi";
@@ -7,6 +7,8 @@ import { RxDownload } from "react-icons/rx";
 
 export default function TableDokumen() {
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const location = useLocation();
+    const isAdmin = location.pathname.startsWith("/admin");
     // const { data: courses, deleteCourse, error } = useCourse();
 
     // if (error) return <p className="text-red-500">Failed to fetch courses.</p>;
@@ -98,25 +100,29 @@ export default function TableDokumen() {
                                     >
                                         <RxDownload size= "24" />
                                     </button>
-                                    <button className="bg-babyBlue p-2 rounded-lg hover:bg-orange-300 hover:text-white">
-                                        <NavLink
-                                            to={`/admin/editDokumen/${doc.id}`}
-                                        >
-                                            <FiEdit size= "24" style={{ strokeWidth: 1.5 }} />
-                                        </NavLink>
-                                    </button>
-                                    <button 
-                                        // onClick={() => {
-                                        //     if (confirm("Apakah Anda yakin ingin menghapus dokumen ini?")) {
-                                        //         deleteDokumen(doc.id)
-                                        //         .then(() => toast.success("Dokumen berhasil dihapus!"))
-                                        //         .catch(() => toast.error("Gagal menghapus dokumen"));
-                                        //     }
-                                        // }}
-                                        className="bg-babyBlue p-2 rounded-lg cursor-pointer hover:bg-red hover:text-white"
-                                    >
-                                        <PiTrashSimple size= "24" />
-                                    </button>
+                                    {isAdmin && (
+                                        <>
+                                            <button className="bg-babyBlue p-2 rounded-lg hover:bg-orange-300 hover:text-white">
+                                                <NavLink
+                                                    to={`/admin/editDokumen/${doc.id}`}
+                                                >
+                                                    <FiEdit size= "24" style={{ strokeWidth: 1.5 }} />
+                                                </NavLink>
+                                            </button>    
+                                            <button 
+                                                // onClick={() => {
+                                                //     if (confirm("Apakah Anda yakin ingin menghapus dokumen ini?")) {
+                                                //         deleteDokumen(doc.id)
+                                                //         .then(() => toast.success("Dokumen berhasil dihapus!"))
+                                                //         .catch(() => toast.error("Gagal menghapus dokumen"));
+                                                //     }
+                                                // }}
+                                                className="bg-babyBlue p-2 rounded-lg cursor-pointer hover:bg-red hover:text-white"
+                                            >
+                                                <PiTrashSimple size= "24" />
+                                            </button>                              
+                                        </>
+                                    )}
                                 </td>
                             </tr>
                         ))}
