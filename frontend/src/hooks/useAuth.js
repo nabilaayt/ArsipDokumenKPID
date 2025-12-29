@@ -21,17 +21,26 @@ export default function useAuth() {
     // Login
     const login = async (payload) => {
         try {
+            setLoading(true);
+
             const res = await loginApi(payload);
 
-            localStorage.setItem("token", res.data.token);
-            localStorage.setItem("user", JSON.stringify(res.data));
+            const { token, role, nama } = res.data.payload;
 
-            setToken(res.data.token);
-            setUser(res.data);
+            const userData = { role, nama };
 
-            return res;
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(userData));
+
+            setToken(token);
+            setUser(userData);
+
+            setLoading(false);
+
+            return userData;
         } catch (error) {
-            console.error("Login gagal:", error); 
+            setLoading(false);
+            console.error("Login gagal:", error);
             throw error;
         }
     };

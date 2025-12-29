@@ -10,19 +10,20 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
 
         try {
-            const res = await login({
+            const result = await login({
                 email,
-                password
+                password,
             });
 
             toast.success("Login berhasil!");
 
-            const role = res.data.role;
+            const role = result.role;
 
             if (role === "admin") {
                 navigate("/admin/dashboard", { replace: true });
@@ -31,8 +32,7 @@ export default function Login() {
             }
 
         } catch (err) {
-            const message =
-                err.response?.data?.message || "Login gagal";
+            const message = err.response?.data?.message || "Login gagal";
             toast.error(message);
             setError(message);
         }
