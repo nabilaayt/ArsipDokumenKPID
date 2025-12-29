@@ -2,7 +2,9 @@ import { Navigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
 export default function ProtectedRoute({ children, allowedRole }) {
-    const { user, isAuth } = useAuth();
+    const { user, isAuth, loading } = useAuth();
+
+    if(loading) return null;
 
     // Belum login
     if(!isAuth || !user) {
