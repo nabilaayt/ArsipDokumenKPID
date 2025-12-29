@@ -12,7 +12,7 @@ import AdminDokumen from "./pages/admin/Dokumen";
 import AddDokumen from "./pages/admin/AddDokumen";
 
 // Pages User
-import DashboardUser from "./pages/admin/Dashboard";
+import DashboardUser from "./pages/user/DashboardUser";
 import DokumenUser from "./pages/user/DokumenUser";
 import EditDokumen from "./pages/admin/EditDokumen";
 

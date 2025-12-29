@@ -33,8 +33,12 @@ exports.login = (req, res) => {
 
                 const payload = {
                     token: token,
-                    role: user.role,
-                    nama: user.nama_admin 
+                    user: { 
+                        id: user.id,
+                        role: user.role,
+                        nama: user.nama_admin,
+                        email: user.email
+                    }
                 };
 
                 return response(200, payload, "Login Berhasil", res);
