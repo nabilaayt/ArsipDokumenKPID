@@ -1,74 +1,63 @@
-<<<<<<< HEAD
-import { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
-=======
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
->>>>>>> b8fa205e85b9ff46fee44ccb7cb201701563a1b9
 import toast from "react-hot-toast";
 import { FiEdit } from "react-icons/fi";
 import { PiTrashSimple } from "react-icons/pi";
 import { RxDownload } from "react-icons/rx";
-import { getDokumen } from "../../services/api"; // Pastikan path ini benar
+
 
 export default function TableDokumen() {
     const [rowsPerPage, setRowsPerPage] = useState(10);
-<<<<<<< HEAD
-    const [documents, setDocuments] = useState([]);
-    const [loading, setLoading] = useState(true);
-=======
     const location = useLocation();
     const isAdmin = location.pathname.startsWith("/admin");
     // const { data: courses, deleteCourse, error } = useCourse();
->>>>>>> b8fa205e85b9ff46fee44ccb7cb201701563a1b9
 
-    // 1. Ambil data dari Backend saat komponen dimuat
-    useEffect(() => {
-        loadData();
-    }, []);
+    // if (loading) return <p className="p-8 text-center text-gray-500">Memuat data arsip...</p>;
 
-    const loadData = async () => {
-        try {
-            const res = await getDokumen();
-            if (res.status === 200) {
-                setDocuments(res.payload);
-            }
-        } catch (error) {
-            toast.error("Gagal mengambil data dari server");
-        } finally {
-            setLoading(false);
-        }
-    };
+    const dummyDocuments = [
+        {
+            id: 1,
+            nomor: "015/KPID-SMS/I/2025",
+            tglDokumen: "05-01-2025",
+            tglDiterima: "06-01-2025",
+            asal: "KPI Pusat",
+            perihal: "Edaran Pedoman Penyiaran",
+            klasifikasi: "Edaran",
+            prioritas: "Normal",
+        },
+        {
+            id: 2,
+            nomor: "016/KPID-SMS/I/2025",
+            tglDokumen: "05-01-2025",
+            tglDiterima: "06-01-2025",
+            asal: "KPI Pusat",
+            perihal: "Edaran Pedoman Penyiaran",
+            klasifikasi: "Pengaduan",
+            prioritas: "Normal",
+        },
+        {
+            id: 3,
+            nomor: "017/KPID-SMS/I/2025",
+            tglDokumen: "05-01-2025",
+            tglDiterima: "06-01-2025",
+            asal: "KPI Pusat",
+            perihal: "Edaran Pedoman Penyiaran",
+            klasifikasi: "Undangan",
+            prioritas: "Tinggi",
+        },
+        {
+            id: 4,
+            nomor: "018/KPID-SMS/I/2025",
+            tglDokumen: "05-01-2025",
+            tglDiterima: "06-01-2025",
+            asal: "KPI Pusat",
+            perihal: "Edaran Pedoman Penyiaran",
+            klasifikasi: "Edaran",
+            prioritas: "Tinggi",
+        },
+    ];
 
-    // 2. Fungsi Hapus
-    const handleDelete = async (id) => {
-        if (window.confirm("Apakah Anda yakin ingin menghapus dokumen ini?")) {
-            const token = localStorage.getItem("token");
-            try {
-                const res = await fetch(`http://localhost:3000/api/dokumen/${id}`, {
-                    method: "DELETE",
-                    headers: { "Authorization": `Bearer ${token}` }
-                });
-                const result = await res.json();
-                
-                if (res.ok) {
-                    toast.success("Dokumen berhasil dihapus!");
-                    loadData(); // Refresh tabel
-                } else {
-                    toast.error(result.message || "Gagal menghapus");
-                }
-            } catch (error) {
-                toast.error("Terjadi kesalahan koneksi");
-            }
-        }
-    };
-
-    // 3. Fungsi Download
-    const handleDownload = (filename) => {
-        window.open(`http://localhost:3000/api/download/${filename}`, "_blank");
-    };
-
-    if (loading) return <p className="p-8 text-center text-gray-500">Memuat data arsip...</p>;
+    const documents = dummyDocuments.slice(0, rowsPerPage);
 
     return (
         <div className="w-full rounded-xl overflow-hidden bg-white p-2 px-8 pl-8">
@@ -105,31 +94,6 @@ export default function TableDokumen() {
                                     </span>
                                 </td>
                                 <td className="py-4 px-4 whitespace-nowrap text-lg flex flex-row gap-3 text-gray-600">
-<<<<<<< HEAD
-                                    {/* Tombol Download */}
-                                    <button 
-                                        onClick={() => handleDownload(doc.file_url)}
-                                        className="bg-blue-50 p-2 rounded-lg hover:bg-green-600 hover:text-white transition-colors"
-                                    >
-                                        <RxDownload size="24" />
-                                    </button>
-
-                                    {/* Tombol Edit */}
-                                    <NavLink
-                                        to={`/admin/editDokumen/${doc.id}`}
-                                        className="bg-blue-50 p-2 rounded-lg hover:bg-orange-400 hover:text-white transition-colors"
-                                    >
-                                        <FiEdit size="24" style={{ strokeWidth: 1.5 }} />
-                                    </NavLink>
-
-                                    {/* Tombol Hapus */}
-                                    <button 
-                                        onClick={() => handleDelete(doc.id)}
-                                        className="bg-blue-50 p-2 rounded-lg cursor-pointer hover:bg-red-600 hover:text-white transition-colors"
-                                    >
-                                        <PiTrashSimple size="24" />
-                                    </button>
-=======
                                      <button 
                                         // onClick={() => handleDownload(doc)}
                                         className="bg-babyBlue p-2 rounded-lg hover:bg-lime-600 hover:text-white"
@@ -159,7 +123,6 @@ export default function TableDokumen() {
                                             </button>                              
                                         </>
                                     )}
->>>>>>> b8fa205e85b9ff46fee44ccb7cb201701563a1b9
                                 </td>
                             </tr>
                         ))}

@@ -16,18 +16,26 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
 }));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
-// Folder Statis
+// PENTING: Tambahkan limit 200mb pada body-parser
+app.use(bodyParser.json({ limit: '200mb' }));
+app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routing
 app.use('/api/auth', authRoutes);
 app.use('/api', docRoutes);
 
 app.get('/', (req, res) => {
     res.status(200).json({ message: "API Arsip KPID Sumsel Ready" });
+});
+
+// Middleware Global Error Handling (Opsional tapi berguna untuk menangkap error Multer)
+app.use((err, req, res, next) => {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(413).json({ message: "File terlalu besar! Maksimal 200 MB." });
+    }
+    res.status(500).json({ message: err.message });
 });
 
 app.use((req, res) => {
