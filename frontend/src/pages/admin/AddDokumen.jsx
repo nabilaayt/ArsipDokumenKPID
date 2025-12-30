@@ -3,61 +3,65 @@ import Topbar from "../../components/TopBar";
 import { SlCloudUpload } from "react-icons/sl";
 import toast from "react-hot-toast";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useState, useContext } from "react";
+import { useState } from "react";
+import { addDokumen } from "../../services/document";
+import DropDownPrioritasForm from "../../components/dokumen/DropDownPrioritasForm";
 
 export default function AddDokumen() {
-    // const navigate = useNavigate();
-    // const { createDokumen } = useDokumen();
-    // const { categories } = useCategory();
-    // const [fileName, setFileName] = useState("No file chosen");
-    // // const { selectedCategory, setSelectedCategory } = useContext(CategoryContext);
-    // const [form, setForm] = useState({
-    //     title: "",
-    //     videoUrl: null,
-    //     categoryId: "",
-    //     description: "",
-    //     cover: null,
-    // });
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
+    const [form, setForm] = useState({
+        nomor_dokumen: "",
+        asal_dokumen: "",
+        perihal: "",
+        prioritas: "",
+        tanggal_dokumen: "",
+        tanggal_diterima: "",
+        file: null,
+        file_url: "",
+    });
 
-    // const handleChange = (e) => {
-    //     setForm({
-    //         ...form,
-    //         [e.target.id]: e.target.value,
-    //     });
-    // };
+    const handleChange = (e) => {
+        setForm({
+            ...form,
+            [e.target.id]: e.target.value,
+        });
+    };
 
-    // const handleFileChange = (e) => {
-    //     const file = e.target.files[0];
-    //     if (file) {
-    //         setFileName(file.name);
-    //         setForm({ ...form, cover: file });
-    //     } else {
-    //         setFileName("No file chosen");
-    //     }
-    // };
+    const handleFileChange = (e) => {
+        setForm({
+            ...form,
+            file: e.target.files[0],
+        });
+    };
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    //     if(!selectedCategory || !selectedCategory.id) {
-    //         toast.error("Please select a category");
-    //         return;
-    //     }
+        if (!form.file) {
+            toast.error("File dokumen wajib diunggah");
+            return;
+        }
 
-    //     const addData = {
-    //         ...form,
-    //         category_id: selectedCategory.id,
-    //     };
-        
-    //     try {
-    //         await createDokumen(addData);
-    //         toast.success("Course added successfully!");
-    //         navigate("/admin/courses");
-    //     } catch (error) {
-    //         console.error("Failed to add course:", error);
-    //         toast.error("Failed to add course.");
-    //     }
-    // };
+        const formData = new FormData();
+        Object.entries(form).forEach(([key, value]) => {
+            if (value !== null) {
+                formData.append(key, value);
+            }
+        });
+
+        try {
+            setLoading(true);
+            await addDokumen(formData);
+            toast.success("Dokumen berhasil ditambahkan");
+            navigate("/admin/dokumen");
+        } catch (error) {
+            toast.error("Gagal menambahkan dokumen");
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return(
         <section id="addDokumen" className="font-poppins bg-babyBlue relative w-full flex min-h-screen overflow-hidden">
@@ -72,26 +76,26 @@ export default function AddDokumen() {
                             <h1 className="text-2xl text-gray-700 font-bold">Tambah Dokumen</h1>
                             <p className="text-lg text-gray-500">Lengkapi data dokumen agar dapat dicatat dan diarsipkan ke dalam sistem.</p>
                         </div>
-                        <form onSubmit="" className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             <div className="flex flex-col gap-6">
                                 <div className="flex flex-col gap-3 w-full">
-                                    <label htmlFor="noDokumen" className="text-lg font-medium text-gray-700">Nomor Dokumen</label>
+                                    <label htmlFor="nomor_dokumen" className="text-lg font-medium text-gray-700">Nomor Dokumen</label>
                                         <input 
                                             type="text" 
-                                            id="noDokumen"
-                                            // value={form.title}
-                                            // onChange={handleChange}
+                                            id="nomor_dokumen"
+                                            value={form.nomor_dokumen}
+                                            onChange={handleChange}
                                             placeholder="Masukkan nomor dokumen"
                                             className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
-                                    <label htmlFor="asalDokumen" className="text-lg font-medium text-gray-700">Asal Dokumen</label>
+                                    <label htmlFor="asal_dokumen" className="text-lg font-medium text-gray-700">Asal Dokumen</label>
                                         <input 
                                             type="text" 
-                                            id="asalDokumen"
-                                            // value={form.title}
-                                            // onChange={handleChange}
+                                            id="asal_dokumen"
+                                            value={form.asal_dokumen}
+                                            onChange={handleChange}
                                             placeholder="Masukkan asal dokumen"
                                             className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
@@ -101,80 +105,84 @@ export default function AddDokumen() {
                                         <input 
                                             type="text" 
                                             id="perihal"
-                                            // value={form.title}
-                                            // onChange={handleChange}
+                                            value={form.perihal}
+                                            onChange={handleChange}
                                             placeholder="Masukkan perihal dokumen"
                                             className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
-                                    <label htmlFor="prioritas" className="text-lg font-medium text-gray-700">Prioritas</label>
-                                        <input 
-                                            type="text" 
-                                            id="prioritas"
-                                            // value={form.title}
-                                            // onChange={handleChange}
-                                            placeholder="Masukkan prioritas dokumen"
-                                            className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
-                                        />                                    
+                                    <label className="text-lg font-medium text-gray-700">Prioritas</label>
+                                    <DropDownPrioritasForm
+                                        value={form.prioritas}
+                                        onChange={(value) =>
+                                            setForm((prev) => ({
+                                                ...prev,
+                                                prioritas: value,
+                                            }))
+                                        }
+                                    />                                    
                                 </div>
                             </div>
 
                             <div className="flex flex-col gap-6">
                                 <div className="flex flex-col gap-3 w-full">
-                                    <label htmlFor="tglDokumen" className="text-lg font-medium text-gray-700">Tanggal Dokumen</label>
+                                    <label htmlFor="tanggal_dokumen" className="text-lg font-medium text-gray-700">Tanggal Dokumen</label>
                                         <input 
                                             type="date" 
-                                            id="tglDokumen"
-                                            // value={form.title}
-                                            // onChange={handleChange}
+                                            id="tanggal_dokumen"
+                                            value={form.tanggal_dokumen}
+                                            onChange={handleChange}
                                             placeholder="Masukkan tanggal dokumen"
                                             className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
-                                    <label htmlFor="tglDiterima" className="text-lg font-medium text-gray-700">Tanggal Diterima</label>
+                                    <label htmlFor="tanggal_diterima" className="text-lg font-medium text-gray-700">Tanggal Diterima</label>
                                         <input 
                                             type="date" 
-                                            id="tglDiterima"
-                                            // value={form.title}
-                                            // onChange={handleChange}
+                                            id="tanggal_diterima"
+                                            value={form.tanggal_diterima}
+                                            onChange={handleChange}
                                             placeholder="Masukkan tanggal dokumen"
                                             className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
-                                    <label htmlFor="fileUrl" className="text-lg font-medium text-heading">Unggah Dokumen</label>
-                                    <label htmlFor="fileUrl"  className="relative flex flex-col items-center justify-center w-full h-42 bg-babyBlue border-2 border-dashed border-gray-700 rounded-2xl cursor-pointer hover:border-gray-700 transition-colors">
+                                    <label className="text-lg font-medium text-heading">
+                                        Unggah Dokumen
+                                    </label>
+
+                                    <label className="relative flex flex-col items-center justify-center w-full h-42 bg-babyBlue border-2 border-dashed border-gray-700 rounded-2xl cursor-pointer hover:border-gray-700 transition-colors">
                                         <div className="flex flex-col items-center justify-center gap-3 py-6">
-                                            <SlCloudUpload size= "40" style={{ strokeWidth: 1.5 }} />
-                                            <div className="text-center px-4">
-                                                <p className="text-base text-gray-600 font-medium">
-                                                    Klik atau seret file Anda ke sini.
-                                                </p>
-                                                <p className="text-sm text-gray-500 mt-1">
-                                                    .doc, .docx dan pdf - hingga 200MB
-                                                </p>
-                                            </div>
+                                            {form.file ? (
+                                                <div className="text-center px-6">
+                                                    <p className="text-lg text-gray-700 break-all">
+                                                        {form.file.name}
+                                                    </p>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <SlCloudUpload size="40" style={{ strokeWidth: 1.5 }} />
+                                                    <div className="text-center px-6">
+                                                        <p className="text-base text-gray-600 font-medium">
+                                                            Klik atau seret file Anda ke sini
+                                                        </p>
+                                                        <p className="text-sm text-gray-500 mt-1">
+                                                            .doc, .docx, .pdf — maksimal 200MB
+                                                        </p>
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
+
                                         <input
                                             type="file"
-                                            id="fileUrl"
                                             accept=".pdf,.doc,.docx"
-                                            // onChange={(e) => {
-                                            //     const file = e.target.files[0];
-                                            //     if(file) setForm({ ...form, videoUrl: file });
-                                            // }}
+                                            onChange={handleFileChange}
                                             className="hidden"
                                         />
                                     </label>
-                                    {/* {form.fileUrl && (
-                                        <div className="mt-2 p-3 bg-blue-50 rounded-lg">
-                                            <p className="text-sm text-gray-700">
-                                                File terpilih: <span className="font-medium">{form.fileUrl.name}</span>
-                                            </p>
-                                        </div>
-                                    )} */}
                                 </div>
                             </div>
                             <div className="flex flex-row w-full gap-5 items-center mt-6">

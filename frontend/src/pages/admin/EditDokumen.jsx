@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getDokumenById, updateDokumen } from "../../services/document";
+import DropDownPrioritasForm from "../../components/dokumen/DropDownPrioritasForm";
 
 export default function EditDokumen() {
     const { id } = useParams();
@@ -18,6 +19,7 @@ export default function EditDokumen() {
         tanggal_dokumen: "",
         tanggal_diterima: "",
         file: null,
+        file_url: "",
     });
 
     useEffect(() => {
@@ -34,6 +36,7 @@ export default function EditDokumen() {
                     tanggal_dokumen: data.tanggal_dokumen?.slice(0, 10),
                     tanggal_diterima: data.tanggal_diterima?.slice(0, 10),
                     file: null, 
+                    file_url: data.file_url,
                 });
 
                 setLoading(false);
@@ -80,38 +83,10 @@ export default function EditDokumen() {
         }
     };
 
-    // const handleFileChange = (e) => {
-    //     const file = e.target.files[0];
-    //     if (file) {
-    //         setFileName(file.name);
-    //         setForm({ ...form, cover: file });
-    //     } else {
-    //         setFileName("No file chosen");
-    //     }
-    // };
-
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-
-    //     if(!selectedCategory || !selectedCategory.id) {
-    //         toast.error("Please select a category");
-    //         return;
-    //     }
-
-    //     const addData = {
-    //         ...form,
-    //         category_id: selectedCategory.id,
-    //     };
-        
-    //     try {
-    //         await createDokumen(addData);
-    //         toast.success("Course added successfully!");
-    //         navigate("/admin/courses");
-    //     } catch (error) {
-    //         console.error("Failed to add course:", error);
-    //         toast.error("Failed to add course.");
-    //     }
-    // };
+    const getOldFileName = (url) => {
+        if(!url) return "";
+        return url.split("/").pop();
+    };
 
     if (loading) {
     return <p className="p-8 text-center">Memuat data dokumen...</p>;
@@ -133,7 +108,7 @@ export default function EditDokumen() {
                         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             <div className="flex flex-col gap-6">
                                 <div className="flex flex-col gap-3 w-full">
-                                    <label htmlFor="noDokumen" className="text-lg font-medium text-gray-700">Nomor Dokumen</label>
+                                    <label htmlFor="nomor_dokumen" className="text-lg font-medium text-gray-700">Nomor Dokumen</label>
                                         <input 
                                             type="text" 
                                             id="nomor_dokumen"
@@ -144,7 +119,7 @@ export default function EditDokumen() {
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
-                                    <label htmlFor="asalDokumen" className="text-lg font-medium text-gray-700">Asal Dokumen</label>
+                                    <label htmlFor="asal_dokumen" className="text-lg font-medium text-gray-700">Asal Dokumen</label>
                                         <input 
                                             type="text" 
                                             id="asal_dokumen"
@@ -167,20 +142,21 @@ export default function EditDokumen() {
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
                                     <label htmlFor="prioritas" className="text-lg font-medium text-gray-700">Prioritas</label>
-                                        <input 
-                                            type="text" 
-                                            id="prioritas"
-                                            value={form.prioritas}
-                                            onChange={handleChange}
-                                            placeholder="Masukkan prioritas dokumen"
-                                            className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
-                                        />                                    
+                                    <DropDownPrioritasForm 
+                                        value={form.prioritas}
+                                        onChange={(value) =>
+                                            setForm((prev) => ({
+                                                ...prev,
+                                                prioritas: value,
+                                            }))
+                                        }
+                                    />                                    
                                 </div>
                             </div>
 
                             <div className="flex flex-col gap-6">
                                 <div className="flex flex-col gap-3 w-full">
-                                    <label htmlFor="tglDokumen" className="text-lg font-medium text-gray-700">Tanggal Dokumen</label>
+                                    <label htmlFor="tanggal_dokumen" className="text-lg font-medium text-gray-700">Tanggal Dokumen</label>
                                         <input 
                                             type="date" 
                                             id="tanggal_dokumen"
@@ -191,7 +167,7 @@ export default function EditDokumen() {
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
-                                    <label htmlFor="tglDiterima" className="text-lg font-medium text-gray-700">Tanggal Diterima</label>
+                                    <label htmlFor="tanggal_diterima" className="text-lg font-medium text-gray-700">Tanggal Diterima</label>
                                         <input 
                                             type="date" 
                                             id="tanggal_diterima"
@@ -202,18 +178,39 @@ export default function EditDokumen() {
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
-                                    <label htmlFor="fileUrl" className="text-lg font-medium text-heading">Unggah Dokumen</label>
-                                    <label htmlFor="fileUrl"  className="relative flex flex-col items-center justify-center w-full h-42 bg-babyBlue border-2 border-dashed border-gray-700 rounded-2xl cursor-pointer hover:border-gray-700 transition-colors">
+                                    <label htmlFor="file" className="text-lg font-medium text-heading">Unggah Dokumen</label>
+                                    <label htmlFor="file"  className="relative flex flex-col items-center justify-center w-full h-42 bg-babyBlue border-2 border-dashed border-gray-700 rounded-2xl cursor-pointer hover:border-gray-700 transition-colors">
                                         <div className="flex flex-col items-center justify-center gap-3 py-6">
-                                            <SlCloudUpload size= "40" style={{ strokeWidth: 1.5 }} />
-                                            <div className="text-center px-4">
-                                                <p className="text-base text-gray-600 font-medium">
-                                                    Klik atau seret file Anda ke sini.
-                                                </p>
-                                                <p className="text-sm text-gray-500 mt-1">
-                                                    .doc, .docx dan pdf - hingga 200MB
-                                                </p>
-                                            </div>
+                                            {/* File Baru */}
+                                            {form.file? (
+                                                <>
+                                                    <div className="text-center px-6 gap-4 max-w-full">
+                                                        <p className="text-lg text-gray-700 break-all text-center max-w-full">{form.file.name}</p>
+                                                        <p className="text-lg text-gray-500">File baru dipilih</p>
+                                                    </div>
+                                                </>
+                                            ) : form.file_url ? (
+                                                <>
+                                                    {/* File Lama */}
+                                                        <div className="text-center px-6 gap-4 max-w-full">
+                                                            <p className="text-base text-gray-700 break-all text-center max-w-full">{getOldFileName(form.file_url)}</p>
+                                                            <p className="text-lg text-gray-500 mt-1">Klik untuk mengganti file</p>
+                                                        </div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                   {/* Default */}
+                                                    <SlCloudUpload size= "40" style={{ strokeWidth: 1.5 }} />
+                                                    <div className="text-center px-6">
+                                                        <p className="text-base text-gray-600 font-medium">
+                                                            Klik atau seret file Anda ke sini.
+                                                        </p>
+                                                        <p className="text-sm text-gray-500 mt-1">
+                                                            .doc, .docx dan pdf - hingga 200MB
+                                                        </p>
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
                                         <input
                                             type="file"
@@ -223,13 +220,6 @@ export default function EditDokumen() {
                                             className="hidden"
                                         />
                                     </label>
-                                    {/* {form.fileUrl && (
-                                        <div className="mt-2 p-3 bg-blue-50 rounded-lg">
-                                            <p className="text-sm text-gray-700">
-                                                File terpilih: <span className="font-medium">{form.fileUrl.name}</span>
-                                            </p>
-                                        </div>
-                                    )} */}
                                 </div>
                             </div>
                             <div className="flex flex-row w-full gap-5 items-center mt-6">
@@ -237,7 +227,7 @@ export default function EditDokumen() {
                                     type="submit"
                                     className="bg-red text-white text-lg font-medium rounded-2xl px-5 py-3 w-full hover:scale-[1.02] transition-transform cursor-pointer"
                                 >
-                                    Simpan
+                                    Perbarui
                                 </button>
                                 <NavLink
                                     to={`/admin/editDokumen/${id}`}

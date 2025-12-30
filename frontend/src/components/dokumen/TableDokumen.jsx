@@ -6,32 +6,16 @@ import { PiTrashSimple } from "react-icons/pi";
 import { RxDownload } from "react-icons/rx";
 import useDoc from "../../hooks/useDoc";
 
-export default function TableDokumen() {
-    const { dokumen, loading, fetchDokumen, removeDokumen } = useDoc();
+export default function TableDokumen({ data, loading }) {
+    const { removeDokumen } = useDoc();
     const [rowsPerPage] = useState(10);
     const location = useLocation();
     const isAdmin = location.pathname.startsWith("/admin");
 
-    useEffect(() => {
-        fetchDokumen();
-    }, []);
-
-    // const handleDownload = (doc) => {
-    //     if(!doc.file_url){
-    //         toast.error("File tidak tersedia");
-    //         return;
-    //     }
-
-    //     const fileUrl = `http://localhost:3000/uploads/${doc.file_url}`;
-
-    //     // trigger download
-    //     const link = document.createElement("a");
-    //     link.href = fileUrl;
-    //     link.download = doc.file_url;
-    //     document.body.appendChild(link);
-    //     link.click();
-    //     document.body.removeChild(link);
-    // };
+    // const filteredDokumen = dokumen?.filter((doc) => {
+    //     if (priority === "all") return true;
+    //     return doc.prioritas === priority;
+    // });
 
     const handleDownload = async (doc) => {
         try {
@@ -58,7 +42,6 @@ export default function TableDokumen() {
         }
     };
 
-
     if (loading) return <p className="p-8 text-center text-gray-500">Memuat data arsip...</p>;
 
     return (
@@ -77,7 +60,7 @@ export default function TableDokumen() {
                         </tr>
                     </thead>
                     <tbody>
-                        {dokumen?.slice(0, rowsPerPage).map((doc) => (
+                        {data?.slice(0, rowsPerPage).map((doc) => (
                             <tr key={doc.id} className="border-b border-gray-200 relative">
                                 <td className="py-4 px-4 whitespace-nowrap text-lg text-gray-600">{doc.nomor_dokumen}</td>
                                 <td className="py-4 px-4 whitespace-nowrap text-lg text-gray-600">{doc.tanggal_dokumen}</td>
@@ -88,8 +71,8 @@ export default function TableDokumen() {
                                     <span
                                         className={`px-6 py-3 rounded-xl text-sm font-medium ${
                                             doc.prioritas === "Tinggi"
-                                                ? "bg-red-100 text-red-600"
-                                                : "bg-blue-100 text-blue-600"
+                                                ? "bg-red-100 text-red"
+                                                : "bg-blue-100 text-blue"
                                         }`}
                                     >
                                         {doc.prioritas}
@@ -98,30 +81,50 @@ export default function TableDokumen() {
                                 <td className="py-4 px-4 whitespace-nowrap text-lg flex flex-row gap-3 text-gray-600">
                                      <button 
                                         onClick={() => handleDownload(doc)}
-                                        className="bg-babyBlue p-2 rounded-lg hover:bg-lime-600 hover:text-white"
+                                        className="bg-babyBlue p-2 rounded-lg hover:bg-lime-600 hover:text-white cursor-pointer"
                                     >
                                         <RxDownload size= "24" />
                                     </button>
                                     {isAdmin && (
                                         <>
-                                            <button className="bg-babyBlue p-2 rounded-lg hover:bg-orange-300 hover:text-white">
-                                                <NavLink
-                                                    to={`/admin/editDokumen/${doc.id}`}
+                                            <NavLink
+                                                to={`/admin/editDokumen/${doc.id}`}
+                                                className="bg-babyBlue p-2 rounded-lg hover:bg-orange-300 hover:text-white cursor-pointer inline-flex"
                                                 >
-                                                    <FiEdit size= "24" style={{ strokeWidth: 1.5 }} />
-                                                </NavLink>
-                                            </button>    
-                                            <button 
+                                                <FiEdit size="24" style={{ strokeWidth: 1.5 }} />
+                                            </NavLink>    
+                                            <button
                                                 onClick={() => {
-                                                    if (confirm("Hapus dokumen ini?")) {
-                                                        removeDokumen(doc.id)
-                                                        .then(() => toast.success("Dokumen berhasil dihapus!"))
-                                                        .catch(() => toast.error("Gagal menghapus dokumen"));
-                                                    }
+                                                    toast((t) => (
+                                                    <div className="flex flex-col gap-3">
+                                                        <p className="text-gray-700 font-medium">
+                                                            Yakin ingin menghapus dokumen ini?
+                                                        </p>
+                                                        <div className="flex justify-end gap-3">
+                                                        <button
+                                                            onClick={() => toast.dismiss(t.id)}
+                                                            className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 cursor-pointer"
+                                                        >
+                                                            Batal
+                                                        </button>
+                                                        <button
+                                                            onClick={() => {
+                                                            removeDokumen(doc.id)
+                                                                .then(() => toast.success("Dokumen berhasil dihapus"))
+                                                                .catch(() => toast.error("Gagal menghapus dokumen"));
+                                                            toast.dismiss(t.id);
+                                                            }}
+                                                            className="px-4 py-2 rounded-lg bg-red text-white cursor-pointer"
+                                                        >
+                                                            Hapus
+                                                        </button>
+                                                        </div>
+                                                    </div>
+                                                    ), { duration: Infinity });
                                                 }}
-                                                className="bg-babyBlue p-2 rounded-lg cursor-pointer hover:bg-red hover:text-white"
-                                            >
-                                                <PiTrashSimple size= "24" />
+                                                className="bg-babyBlue p-2 rounded-lg hover:bg-red hover:text-white cursor-pointer"
+                                                >
+                                                <PiTrashSimple size="24"/>
                                             </button>                              
                                         </>
                                     )}
@@ -130,7 +133,7 @@ export default function TableDokumen() {
                         ))}
                     </tbody>
                 </table>
-                {dokumen?.length === 0 && (
+                {data?.length === 0 && (
                     <p className="text-center py-10 text-gray-400">Belum ada dokumen yang tersimpan.</p>
                 )}
             </div>

@@ -2,49 +2,49 @@ import { useState } from "react";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 
-export default function DropDownPrioritas({value, onChange}) {
-    const [open, setOpen] = useState(false);
-    const priorities = [
-        { value: "all", label: "Semua" },
-        { value: "Normal", label: "Normal" },
-        { value: "Tinggi", label: "Tinggi" },
+export default function DropDownTahun({ value, onChange }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const currentYear = new Date().getFullYear();
+
+    const years = [
+        { id: "all", name: "Semua Tahun", value: null },
+        ...Array.from({ length: 5 }, (_, i) => {
+            const year = currentYear - i;
+            return { id: year, name: `${year}`, value: year };
+        }),
     ];
 
     const selectedLabel =
-        priorities.find((p) => p.value === value)?.label || "Semua";
+        years.find((y) => y.value === value)?.name || "Tahun";
 
     return(
         <div className="relative">
-            <ClickAwayListener onClickAway={() => setOpen(false)}>
+            <ClickAwayListener onClickAway={() => setIsOpen(false)}>
                 <div className="relative">
                     <div 
-                        onClick={() => setOpen(!open)}
+                        onClick={() => setIsOpen(!isOpen)}
                         className="bg-white gap-2 px-2 sm:px-4 py-2 sm:py-2 text-lg rounded-xl w-full flex items-center text-heading justify-between cursor-pointer select-none"
                     >
-                        <span className="text-gray-700">
+                        <span className={value ? "text-gray-700" : "text-gray-500"}>
                             {selectedLabel}
                         </span>
                         <RiArrowDropDownLine
                             size={34}
-                            className={`transition-transform ${open ? "rotate-180" : ""}`}
+                            className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
                         />
                     </div>
-                    {open && (
+                    {isOpen && (
                         <div className="absolute mt-2 w-full bg-white rounded-xl z-10 max-h-60 overflow-y-auto">
-                            {priorities.map((item) => (
+                            {years.map((item) => (
                                 <div
-                                    key={item.value}
+                                    key={item.id}
                                     onClick={() => {
                                         onChange(item.value);
-                                        setOpen(false);
+                                        setIsOpen(false);
                                     }}
-                                    className={`px-4 py-2 cursor-pointer hover:bg-babyBlue ${
-                                        value === item.value
-                                            ? "bg-babyBlue font-medium"
-                                            : ""
-                                    }`}
+                                    className="px-4 py-2 hover:bg-babyBlue cursor-pointer"
                                 >
-                                    {item.label}
+                                    {item.name}
                                 </div>
                             ))}
                         </div>
