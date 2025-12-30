@@ -1,7 +1,7 @@
 const db = require('../config/db');
 const response = require('../response');
 
-// --- 1. AMBIL SEMUA DOKUMEN (Dengan Search & Filter) ---
+// Ambil Semua Dokumen (Dengan Search & Filter)
 exports.getDokumen = (req, res) => {
     const { prioritas, bulan, tahun, search } = req.query;
     
@@ -50,7 +50,30 @@ exports.getDokumen = (req, res) => {
     });
 };
 
-// 2. Statistik Dashboard
+// Ambil Dokumen By Id
+exports.getDokumenById = (req, res) => {
+    const { id } = req.params;
+
+    const sql = `
+        SELECT id, nomor_dokumen, asal_dokumen, perihal, prioritas, file_url,
+        DATE_FORMAT(tanggal_dokumen, '%Y-%m-%d') AS tanggal_dokumen,
+        DATE_FORMAT(tanggal_diterima, '%Y-%m-%d') AS tanggal_diterima
+        FROM dokumen
+        WHERE id = ?
+    `;
+
+    db.query(sql, [id], (err, result) => {
+        if(err) return response(500, err.message, "Database error", res);
+
+        if(result.length === 0) {
+            return response(404, null, "Dokumen tidak ditemukan", res);
+        }
+
+        response(200, result[0], "Berhasil mengambil detail dokumen", res);
+    });
+};
+
+// Statistik Dashboard
 exports.getStats = (req, res) => {
     const sql = `
         SELECT 
@@ -63,7 +86,7 @@ exports.getStats = (req, res) => {
     });
 };
 
-// 3. Tambah Dokumen (TANPA KLASIFIKASI)
+// Tambah Dokumen (TANPA KLASIFIKASI)
 exports.addDokumen = (req, res) => {
     // Hapus klasifikasi dari sini
     const { nomor_dokumen, tanggal_dokumen, tanggal_diterima, asal_dokumen, perihal, prioritas } = req.body;
@@ -79,7 +102,7 @@ exports.addDokumen = (req, res) => {
     });
 };
 
-// 4. Update Dokumen (TANPA KLASIFIKASI)
+// Update Dokumen (TANPA KLASIFIKASI)
 exports.updateDokumen = (req, res) => {
     const { id } = req.params;
     const { nomor_dokumen, tanggal_dokumen, tanggal_diterima, asal_dokumen, perihal, prioritas } = req.body;
@@ -98,7 +121,7 @@ exports.updateDokumen = (req, res) => {
     });
 };
 
-// 5. Hapus Dokumen
+// Hapus Dokumen
 exports.deleteDokumen = (req, res) => {
     const { id } = req.params;
     const sql = "DELETE FROM dokumen WHERE id = ?";
@@ -112,7 +135,7 @@ exports.deleteDokumen = (req, res) => {
 
 
 
-// word to pdf
+// Word to Pdf
 const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
