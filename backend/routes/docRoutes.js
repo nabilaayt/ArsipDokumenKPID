@@ -7,6 +7,7 @@ const { verifyAdmin } = require('../middleware/authMiddleware');
 
 // Akses User & Admin
 router.get('/dokumen', docController.getDokumen);
+router.get('/dokumen/:id', docController.getDokumenById);
 router.get('/stats', docController.getStats);
 
 // Route Download File

@@ -2,29 +2,83 @@ import SideBar from "../../components/SideBar";
 import Topbar from "../../components/TopBar";
 import { SlCloudUpload } from "react-icons/sl";
 import toast from "react-hot-toast";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useState, useContext } from "react";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { getDokumenById, updateDokumen } from "../../services/document";
 
 export default function EditDokumen() {
-    // const navigate = useNavigate();
-    // const { createDokumen } = useDokumen();
-    // const { categories } = useCategory();
-    // const [fileName, setFileName] = useState("No file chosen");
-    // // const { selectedCategory, setSelectedCategory } = useContext(CategoryContext);
-    // const [form, setForm] = useState({
-    //     title: "",
-    //     videoUrl: null,
-    //     categoryId: "",
-    //     description: "",
-    //     cover: null,
-    // });
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
+    const [form, setForm] = useState({
+        nomor_dokumen: "",
+        asal_dokumen: "",
+        perihal: "",
+        prioritas: "",
+        tanggal_dokumen: "",
+        tanggal_diterima: "",
+        file: null,
+    });
 
-    // const handleChange = (e) => {
-    //     setForm({
-    //         ...form,
-    //         [e.target.id]: e.target.value,
-    //     });
-    // };
+    useEffect(() => {
+        const fetchDetail = async () => {
+            try {
+                const res = await getDokumenById(id);
+                const data = res.data.payload;
+
+                setForm({
+                    nomor_dokumen: data.nomor_dokumen,
+                    asal_dokumen: data.asal_dokumen,
+                    perihal: data.perihal,
+                    prioritas: data.prioritas,
+                    tanggal_dokumen: data.tanggal_dokumen?.slice(0, 10),
+                    tanggal_diterima: data.tanggal_diterima?.slice(0, 10),
+                    file: null, 
+                });
+
+                setLoading(false);
+            } catch (error) {
+                toast.error("Gagal mengambil data dokumen");
+            }
+        };
+
+        fetchDetail();
+    }, [id]);
+
+    const handleChange = (e) => {
+        setForm({
+            ...form,
+            [e.target.id]: e.target.value,
+        });
+    };
+
+    const handleFileChange = (e) => {
+        setForm({
+            ...form,
+            file: e.target.files[0],
+        });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+
+        Object.entries(form).forEach(([key, value]) => {
+            if(value !== null) {
+                formData.append(key, value);
+            }
+        });
+
+        try {
+            await updateDokumen(id, formData);
+            toast.success("Dokumen berhasil diperbarui");
+            navigate("/admin/dokumen");
+        } catch (error) {
+            toast.error("Gagal update dokumen");
+            console.error(error);
+        }
+    };
 
     // const handleFileChange = (e) => {
     //     const file = e.target.files[0];
@@ -59,6 +113,10 @@ export default function EditDokumen() {
     //     }
     // };
 
+    if (loading) {
+    return <p className="p-8 text-center">Memuat data dokumen...</p>;
+    }
+
     return(
         <section id="addDokumen" className="font-poppins bg-babyBlue relative w-full flex min-h-screen overflow-hidden">
             <div className="h-auto">
@@ -69,18 +127,18 @@ export default function EditDokumen() {
                 <div className="flex-1 px-4 sm:px-6 lg:px-10">
                     <div className="flex flex-col w-full relative rounded-2xl p-6 sm:p-8 md:p-10 bg-white gap-10 z-10 mb-5 mt-10">
                         <div className="flex flex-col gap-4">
-                            <h1 className="text-2xl text-gray-700 font-bold">Tambah Dokumen</h1>
-                            <p className="text-lg text-gray-500">Lengkapi data dokumen agar dapat dicatat dan diarsipkan ke dalam sistem.</p>
+                            <h1 className="text-2xl text-gray-700 font-bold">Edit Dokumen</h1>
+                            <p className="text-lg text-gray-500">Perbarui data dokumen yang sudah tersimpan.</p>
                         </div>
-                        <form onSubmit="" className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             <div className="flex flex-col gap-6">
                                 <div className="flex flex-col gap-3 w-full">
                                     <label htmlFor="noDokumen" className="text-lg font-medium text-gray-700">Nomor Dokumen</label>
                                         <input 
                                             type="text" 
-                                            id="noDokumen"
-                                            // value={form.title}
-                                            // onChange={handleChange}
+                                            id="nomor_dokumen"
+                                            value={form.nomor_dokumen}
+                                            onChange={handleChange}
                                             placeholder="Masukkan nomor dokumen"
                                             className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
@@ -89,9 +147,9 @@ export default function EditDokumen() {
                                     <label htmlFor="asalDokumen" className="text-lg font-medium text-gray-700">Asal Dokumen</label>
                                         <input 
                                             type="text" 
-                                            id="asalDokumen"
-                                            // value={form.title}
-                                            // onChange={handleChange}
+                                            id="asal_dokumen"
+                                            value={form.asal_dokumen}
+                                            onChange={handleChange}
                                             placeholder="Masukkan asal dokumen"
                                             className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
@@ -101,8 +159,8 @@ export default function EditDokumen() {
                                         <input 
                                             type="text" 
                                             id="perihal"
-                                            // value={form.title}
-                                            // onChange={handleChange}
+                                            value={form.perihal}
+                                            onChange={handleChange}
                                             placeholder="Masukkan perihal dokumen"
                                             className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
@@ -112,8 +170,8 @@ export default function EditDokumen() {
                                         <input 
                                             type="text" 
                                             id="prioritas"
-                                            // value={form.title}
-                                            // onChange={handleChange}
+                                            value={form.prioritas}
+                                            onChange={handleChange}
                                             placeholder="Masukkan prioritas dokumen"
                                             className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
@@ -125,9 +183,9 @@ export default function EditDokumen() {
                                     <label htmlFor="tglDokumen" className="text-lg font-medium text-gray-700">Tanggal Dokumen</label>
                                         <input 
                                             type="date" 
-                                            id="tglDokumen"
-                                            // value={form.title}
-                                            // onChange={handleChange}
+                                            id="tanggal_dokumen"
+                                            value={form.tanggal_dokumen}
+                                            onChange={handleChange}
                                             placeholder="Masukkan tanggal dokumen"
                                             className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
@@ -136,9 +194,9 @@ export default function EditDokumen() {
                                     <label htmlFor="tglDiterima" className="text-lg font-medium text-gray-700">Tanggal Diterima</label>
                                         <input 
                                             type="date" 
-                                            id="tglDiterima"
-                                            // value={form.title}
-                                            // onChange={handleChange}
+                                            id="tanggal_diterima"
+                                            value={form.tanggal_diterima}
+                                            onChange={handleChange}
                                             placeholder="Masukkan tanggal dokumen"
                                             className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
                                         />                                    
@@ -159,12 +217,9 @@ export default function EditDokumen() {
                                         </div>
                                         <input
                                             type="file"
-                                            id="fileUrl"
+                                            id="file"
                                             accept=".pdf,.doc,.docx"
-                                            // onChange={(e) => {
-                                            //     const file = e.target.files[0];
-                                            //     if(file) setForm({ ...form, videoUrl: file });
-                                            // }}
+                                            onChange={handleFileChange}
                                             className="hidden"
                                         />
                                     </label>
@@ -185,7 +240,7 @@ export default function EditDokumen() {
                                     Simpan
                                 </button>
                                 <NavLink
-                                    to="/admin/dokumen"
+                                    to={`/admin/editDokumen/${id}`}
                                     className="bg-babyBlue text-center text-lg font-medium w-full text-gray-700 px-5 py-3 rounded-2xl hover:scale-[1.02] transition-transform cursor-pointer"
                                 >
                                     Batal

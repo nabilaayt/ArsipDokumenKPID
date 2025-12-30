@@ -1,4 +1,4 @@
-import AdminInfo from "./admin/AdminInfo";
+import InfoUser from "./InfoUser";
 import SearchBar from "./SearchBar";
 
 export default function Topbar() {
@@ -7,7 +7,7 @@ export default function Topbar() {
             <SearchBar />
             <div className="flex flex-row gap-4">
                 {/* bagian notifikasi kalo jadi */}
-                <AdminInfo />
+                <InfoUser />
             </div>
         </nav>
     );

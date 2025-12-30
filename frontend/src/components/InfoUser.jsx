@@ -1,20 +1,13 @@
 import { useEffect, useState } from "react";
 
-export default function AdminInfo() {
+export default function InfoUser() {
     const [user, setUser] = useState(null);
 
-    const dummyUser = {
-        name: "Admin KPID SUMSEL",
-        email: "admin@kpidsumsel.com",
-        profile: null,
-    };
-
     useEffect(() => {
-        // const storedUser = localStorage.getItem("user");
-        // if(storedUser) {
-        //     setUser(JSON.parse(storedUser));
-        // }
-        setUser(dummyUser);
+        const storedUser = localStorage.getItem("user");
+        if(storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
     }, []);
 
     if(!user) {
@@ -53,16 +46,14 @@ export default function AdminInfo() {
             ) : (
                 <div
                     className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center text-white font-semibold text-base sm:text-lg lg:text-lg"
-                    style={{ 
-                        backgroundColor: getColorFromName(user.name),
-                     }}
+                    style={{ backgroundColor: getColorFromName(user.name) }}
                 >
                     {initials}
                 </div>
             )}
 
             <div className="flex flex-col">
-                <h3 className="text-gray-950 text-base sm:text-lg lg:text-xl font-medium">{user.name}</h3>
+                <h3 className="text-gray-700 text-base sm:text-lg lg:text-xl font-medium">{user.name}</h3>
                 <p className="text-gray-500 text-sm sm:text-base lg:text-lg">{user.email}</p>
             </div>
         </div>

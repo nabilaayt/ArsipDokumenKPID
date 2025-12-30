@@ -8,18 +8,6 @@ export default function ProtectedRoute({ children, allowedRole }) {
         return null;
     }
 
-    // // Belum login
-    // if(!isAuth || !user) {
-    //     return <Navigate to="/" replace />
-    // }
-
-    // // Jika role berbeda maka, arahkan sesuai role nya
-    // if(allowedRole && user.role !== allowedRole) {
-    //     if(user.role === "admin") return <Navigate to="/admin/dashboard" replace />;
-    //     if(user.role === "user") return <Navigate to="/user/dashboard" replace />;
-    //     return <Navigate to="/" replace />;
-    // }
-
     if (!isAuth) {
         return <Navigate to="/" replace />;
     }

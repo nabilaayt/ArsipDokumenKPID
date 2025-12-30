@@ -1,63 +1,65 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FiEdit } from "react-icons/fi";
 import { PiTrashSimple } from "react-icons/pi";
 import { RxDownload } from "react-icons/rx";
-
+import useDoc from "../../hooks/useDoc";
 
 export default function TableDokumen() {
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const { dokumen, loading, fetchDokumen, removeDokumen } = useDoc();
+    const [rowsPerPage] = useState(10);
     const location = useLocation();
     const isAdmin = location.pathname.startsWith("/admin");
-    // const { data: courses, deleteCourse, error } = useCourse();
 
-    // if (loading) return <p className="p-8 text-center text-gray-500">Memuat data arsip...</p>;
+    useEffect(() => {
+        fetchDokumen();
+    }, []);
 
-    const dummyDocuments = [
-        {
-            id: 1,
-            nomor: "015/KPID-SMS/I/2025",
-            tglDokumen: "05-01-2025",
-            tglDiterima: "06-01-2025",
-            asal: "KPI Pusat",
-            perihal: "Edaran Pedoman Penyiaran",
-            klasifikasi: "Edaran",
-            prioritas: "Normal",
-        },
-        {
-            id: 2,
-            nomor: "016/KPID-SMS/I/2025",
-            tglDokumen: "05-01-2025",
-            tglDiterima: "06-01-2025",
-            asal: "KPI Pusat",
-            perihal: "Edaran Pedoman Penyiaran",
-            klasifikasi: "Pengaduan",
-            prioritas: "Normal",
-        },
-        {
-            id: 3,
-            nomor: "017/KPID-SMS/I/2025",
-            tglDokumen: "05-01-2025",
-            tglDiterima: "06-01-2025",
-            asal: "KPI Pusat",
-            perihal: "Edaran Pedoman Penyiaran",
-            klasifikasi: "Undangan",
-            prioritas: "Tinggi",
-        },
-        {
-            id: 4,
-            nomor: "018/KPID-SMS/I/2025",
-            tglDokumen: "05-01-2025",
-            tglDiterima: "06-01-2025",
-            asal: "KPI Pusat",
-            perihal: "Edaran Pedoman Penyiaran",
-            klasifikasi: "Edaran",
-            prioritas: "Tinggi",
-        },
-    ];
+    // const handleDownload = (doc) => {
+    //     if(!doc.file_url){
+    //         toast.error("File tidak tersedia");
+    //         return;
+    //     }
 
-    const documents = dummyDocuments.slice(0, rowsPerPage);
+    //     const fileUrl = `http://localhost:3000/uploads/${doc.file_url}`;
+
+    //     // trigger download
+    //     const link = document.createElement("a");
+    //     link.href = fileUrl;
+    //     link.download = doc.file_url;
+    //     document.body.appendChild(link);
+    //     link.click();
+    //     document.body.removeChild(link);
+    // };
+
+    const handleDownload = async (doc) => {
+        try {
+            const res = await fetch(
+                `http://localhost:3000/uploads/${doc.file_url}`
+            );
+
+            if (!res.ok) throw new Error("Gagal download");
+
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = doc.file_url;
+            document.body.appendChild(a);
+            a.click();
+
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            toast.error("File tidak bisa diunduh");
+            console.error(err);
+        }
+    };
+
+
+    if (loading) return <p className="p-8 text-center text-gray-500">Memuat data arsip...</p>;
 
     return (
         <div className="w-full rounded-xl overflow-hidden bg-white p-2 px-8 pl-8">
@@ -75,7 +77,7 @@ export default function TableDokumen() {
                         </tr>
                     </thead>
                     <tbody>
-                        {documents.slice(0, rowsPerPage).map((doc) => (
+                        {dokumen?.slice(0, rowsPerPage).map((doc) => (
                             <tr key={doc.id} className="border-b border-gray-200 relative">
                                 <td className="py-4 px-4 whitespace-nowrap text-lg text-gray-600">{doc.nomor_dokumen}</td>
                                 <td className="py-4 px-4 whitespace-nowrap text-lg text-gray-600">{doc.tanggal_dokumen}</td>
@@ -95,7 +97,7 @@ export default function TableDokumen() {
                                 </td>
                                 <td className="py-4 px-4 whitespace-nowrap text-lg flex flex-row gap-3 text-gray-600">
                                      <button 
-                                        // onClick={() => handleDownload(doc)}
+                                        onClick={() => handleDownload(doc)}
                                         className="bg-babyBlue p-2 rounded-lg hover:bg-lime-600 hover:text-white"
                                     >
                                         <RxDownload size= "24" />
@@ -110,13 +112,13 @@ export default function TableDokumen() {
                                                 </NavLink>
                                             </button>    
                                             <button 
-                                                // onClick={() => {
-                                                //     if (confirm("Apakah Anda yakin ingin menghapus dokumen ini?")) {
-                                                //         deleteDokumen(doc.id)
-                                                //         .then(() => toast.success("Dokumen berhasil dihapus!"))
-                                                //         .catch(() => toast.error("Gagal menghapus dokumen"));
-                                                //     }
-                                                // }}
+                                                onClick={() => {
+                                                    if (confirm("Hapus dokumen ini?")) {
+                                                        removeDokumen(doc.id)
+                                                        .then(() => toast.success("Dokumen berhasil dihapus!"))
+                                                        .catch(() => toast.error("Gagal menghapus dokumen"));
+                                                    }
+                                                }}
                                                 className="bg-babyBlue p-2 rounded-lg cursor-pointer hover:bg-red hover:text-white"
                                             >
                                                 <PiTrashSimple size= "24" />
@@ -128,7 +130,7 @@ export default function TableDokumen() {
                         ))}
                     </tbody>
                 </table>
-                {documents.length === 0 && (
+                {dokumen?.length === 0 && (
                     <p className="text-center py-10 text-gray-400">Belum ada dokumen yang tersimpan.</p>
                 )}
             </div>

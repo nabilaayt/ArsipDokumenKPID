@@ -56,7 +56,7 @@ function App() {
           }
         />
         <Route 
-          path="/admin/editDokumen" 
+          path="/admin/editDokumen/:id" 
           element={
           <ProtectedRoute allowedRole="admin">
               <EditDokumen />

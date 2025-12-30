@@ -1,9 +1,19 @@
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { NavLink } from "react-router-dom";
+import { useState, useEffect } from "react";
 import SideBar from "../../components/SideBar";
 import Topbar from "../../components/TopBar";
 
 export default function Dashboard() {
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem("user");
+        if(storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
+
     return(
         <section id="adminDashboard" className="font-poppins bg-babyBlue relative w-full flex min-h-screen overflow-hidden">
             <div className="h-auto">
@@ -14,7 +24,7 @@ export default function Dashboard() {
                 <div className="flex-1">
                     <div className="flex flex-col px-4 sm:px-6 lg:px-10 gap-4 mt-8 mb-5">
                         <div className="flex flex-col gap-4 mb-8">
-                            <h1 className="text-gray-700 text-2xl font-semibold">Halo, selamat datang kembali Admin</h1>
+                            <h1 className="text-gray-700 text-2xl font-semibold">Halo, selamat datang kembali {user?.name}</h1>
                             <p className="text-gray-500 text-lg leading-relaxed">Selamat datang di arsip dokumen Komisi Penyiaran Daerah Sumatera Selatan</p>
                         </div>
 

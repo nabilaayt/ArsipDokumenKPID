@@ -25,9 +25,16 @@ export default function useAuth() {
 
             const res = await loginApi(payload);
 
-            const { token, role, nama } = res.data.payload;
+            const { token, user } = res.data.payload;
+            const { role, nama, email } = user;
 
-            const userData = { role, nama };
+
+            const userData = { 
+                role, 
+                name: nama, 
+                email,
+                profile: null, 
+            };
 
             localStorage.setItem("token", token);
             localStorage.setItem("user", JSON.stringify(userData));
