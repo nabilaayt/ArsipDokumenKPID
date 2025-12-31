@@ -10,6 +10,44 @@ import useConvertFile from "../hooks/useConvertFile";
 export default function KonversiFile() {
     const [activeType, setActiveType] = useState(null);
     const {files, convertFile, loading} = useConvertFile();
+    const activeFiles = activeType ? files[activeType] : [];
+
+
+    const getConvertedFileName = (name, type) => {
+        if (type === "wordToPdf") {
+            return name.replace(/\.(doc|docx)$/i, ".pdf");
+        }
+        if (type === "pdfToWord") {
+            return name.replace(/\.pdf$/i, ".docx");
+        }
+        return name;
+    };
+    
+    const handleDownloadAll = async () => {
+        const doneFiles = activeFiles.filter(f => f.status === "done");
+
+        for (const file of doneFiles) {
+            try {
+                const response = await fetch(file.downloadUrl);
+                const blob = await response.blob();
+
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+
+                link.href = url;
+                link.download = getConvertedFileName(file.name, activeType);
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                window.URL.revokeObjectURL(url);
+                await new Promise(res => setTimeout(res, 400));
+            } catch (err) {
+                console.error("Gagal download:", file.name, err);
+            }
+        }
+    };
 
     return(
         <section id="konversiFile" className="font-poppins bg-babyBlue relative w-full flex min-h-screen overflow-hidden">
@@ -92,9 +130,9 @@ export default function KonversiFile() {
                                 </label>
 
                                 {/* File List */}
-                                {files.length > 0 && (
+                                {activeFiles.length > 0 && (
                                     <div className="flex flex-col gap-4 mt-8">
-                                        {files.map((file) => (
+                                        {activeFiles.map((file) => (
                                             <div key={file.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-babyBlue rounded-xl px-4 sm:px-5 py-4">
                                                 <div className="flex items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
                                                     <img 
@@ -147,12 +185,16 @@ export default function KonversiFile() {
                                 )}
 
                                 {/* Footer */}
-                                {files.length > 0 && (
+                                {activeFiles.length > 0 && (
                                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-6">
                                         <p className="text-gray-500">
-                                            Total {files.length} file
+                                            Total {activeFiles.length} file
                                         </p>
-                                        <button className="flex items-center gap-2 bg-red text-white px-6 py-3 rounded-xl transition">
+                                        <button 
+                                            onClick={handleDownloadAll}
+                                            disabled={activeFiles.filter(f => f.status === "done").length === 0}
+                                            className="flex items-center gap-2 bg-red text-white px-6 py-3 cursor-pointer rounded-xl transition"
+                                        >
                                             <FiDownload />
                                             Unduh semua
                                         </button>

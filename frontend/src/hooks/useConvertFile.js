@@ -2,7 +2,11 @@ import { useState } from "react";
 import { convertPdfToWord, convertWordToPdf } from "../services/convertFile";
 
 export default function useConvertFile() {
-    const [files, setFiles] = useState([]);
+    const [files, setFiles] = useState({
+        wordToPdf: [],
+        pdfToWord: [],
+    });
+
     const [loading, setLoading] = useState(false);
 
     const convertFile = async (file, type) => {
@@ -16,7 +20,11 @@ export default function useConvertFile() {
             downloadUrl: null,
         };
 
-        setFiles((prev) => [newFile, ...prev]);
+        setFiles(prev => ({
+            ...prev,
+            [type]: [newFile, ...prev[type]]
+        }));
+
         setLoading(true);
 
         try {
@@ -25,18 +33,22 @@ export default function useConvertFile() {
                     ? await convertWordToPdf(file)
                     : await convertPdfToWord(file);
 
-            const url = response.data.data.url_download;
+            const url = response.data.payload.url_download;
 
-            setFiles((prev) => 
-                prev.map((f) =>
-                    f.id === id 
+            setFiles(prev => ({
+                ...prev,
+                [type]: prev[type].map(f =>
+                    f.id === id
                         ? { ...f, status: "done", downloadUrl: url }
                         : f
                 )
-            );
+            }));
         } catch (error) {
             console.error(error);
-            setFiles((prev) => prev.filter((f) => f.id !== id));
+            setFiles(prev => ({
+                ...prev,
+                [type]: prev[type].filter(f => f.id !== id)
+            }));
         } finally {
             setLoading(false);
         }
