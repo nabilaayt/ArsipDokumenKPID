@@ -13,15 +13,17 @@ exports.getDokumen = (req, res) => {
     `;
     let params = [];
 
-    if (prioritas) {
+    if (prioritas && prioritas !== 'all') {
         sql += " AND prioritas = ?";
         params.push(prioritas);
     }
 
-    if (bulan && tahun) {
+    if (bulan && bulan !== 'all') {
         sql += " AND MONTH(tanggal_dokumen) = ? AND YEAR(tanggal_dokumen) = ?";
         params.push(bulan, tahun);
-    } else if (tahun) {
+    }
+    
+    if (tahun && tahun !== 'all') {
         sql += " AND YEAR(tanggal_dokumen) = ?";
         params.push(tahun);
     }
@@ -130,62 +132,6 @@ exports.deleteDokumen = (req, res) => {
         response(200, result, "Dokumen berhasil dihapus", res);
     });
 };
-
-
-
-
-
-// Word to Pdf
-const { exec } = require('child_process');
-const path = require('path');
-const fs = require('fs');
-
-exports.wordToPdf = async (req, res) => {
-    try {
-        if (!req.file) return response(400, null, "File tidak ada", res);
-
-        const inputPath = path.resolve(req.file.path);
-        const outputDir = path.resolve(__dirname, '../uploads/');
-        const outputName = `hasil-${Date.now()}.pdf`;
-        const outputPath = path.join(outputDir, outputName);
-
-        // Path ini harus benar-benar ada di laptop kamu
-        const sofficePath = `"C:\\Program Files\\LibreOffice\\program\\soffice.exe"`;
-
-        console.log("proses Konversi");
-
-        // Perintah sakti langsung ke sistem
-        const cmd = `${sofficePath} --headless --convert-to pdf --outdir "${outputDir}" "${inputPath}"`;
-
-        exec(cmd, (error) => {
-            if (error) {
-                console.error("Error LibreOffice:", error);
-                return response(500, "Mesin konversi gagal. Cek folder LibreOffice.", res);
-            }
-
-            // Cari file yang baru dibuat oleh LibreOffice
-            const fileNameOnly = path.basename(inputPath, path.extname(inputPath)) + ".pdf";
-            const resultFile = path.join(outputDir, fileNameOnly);
-
-            if (fs.existsSync(resultFile)) {
-                fs.renameSync(resultFile, outputPath); // Ubah nama ke yang unik
-                fs.unlinkSync(inputPath); // Hapus word asli
-
-                return response(200, {
-                    url_download: `http://localhost:3000/uploads/${outputName}`
-                }, "BERHASIL.", res);
-            } else {
-                return response(500, "File PDF tidak ditemukan setelah konversi.", res);
-            }
-        });
-
-    } catch (err) {
-        console.error("Crash dicegah:", err);
-        return response(500, "Terjadi kesalahan sistem.", res);
-    }
-};
-
-
 
 
 // --- WORD TO PDF (Auto Delete 1 Jam) ---

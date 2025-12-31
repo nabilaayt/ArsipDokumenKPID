@@ -7,7 +7,7 @@ export default function DropDownTahun({ value, onChange }) {
     const currentYear = new Date().getFullYear();
 
     const years = [
-        { id: "all", name: "Semua Tahun", value: null },
+        { id: "all", name: "Semua Tahun", value: "all" },
         ...Array.from({ length: 5 }, (_, i) => {
             const year = currentYear - i;
             return { id: year, name: `${year}`, value: year };
@@ -25,7 +25,7 @@ export default function DropDownTahun({ value, onChange }) {
                         onClick={() => setIsOpen(!isOpen)}
                         className="bg-white gap-2 px-2 sm:px-4 py-2 sm:py-2 text-lg rounded-xl w-full flex items-center text-heading justify-between cursor-pointer select-none"
                     >
-                        <span className={value ? "text-gray-700" : "text-gray-500"}>
+                        <span className="text-gray-700 truncate">
                             {selectedLabel}
                         </span>
                         <RiArrowDropDownLine

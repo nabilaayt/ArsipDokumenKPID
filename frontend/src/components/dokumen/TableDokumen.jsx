@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FiEdit } from "react-icons/fi";
@@ -11,11 +11,6 @@ export default function TableDokumen({ data, loading }) {
     const [rowsPerPage] = useState(10);
     const location = useLocation();
     const isAdmin = location.pathname.startsWith("/admin");
-
-    // const filteredDokumen = dokumen?.filter((doc) => {
-    //     if (priority === "all") return true;
-    //     return doc.prioritas === priority;
-    // });
 
     const handleDownload = async (doc) => {
         try {

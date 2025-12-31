@@ -12,12 +12,19 @@ import useDoc from "../../hooks/useDoc";
 
 export default function Dokumen() {
     const { dokumen, loading, fetchDokumen } = useDoc();
-    const [prioritas, setPrioritas] = useState(null);
-    const [bulan, setBulan] = useState(null);
-    const [tahun, setTahun] = useState(new Date().getFullYear());
+    const [prioritas, setPrioritas] = useState("all");
+    const [bulan, setBulan] = useState("all");
+    const [tahun, setTahun] = useState("all");
+    // const [tahun, setTahun] = useState(new Date().getFullYear());
 
     useEffect(() => {
-        fetchDokumen({ prioritas, bulan, tahun });
+        const params = {};
+
+        if (prioritas && prioritas !== "all") params.prioritas = prioritas;
+        if (bulan && bulan !== "all") params.bulan = bulan;
+        if (tahun && tahun !== "all") params.tahun = tahun;
+
+        fetchDokumen(params);
     }, [prioritas, bulan, tahun]);
 
     return (

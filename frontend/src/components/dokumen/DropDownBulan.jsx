@@ -6,7 +6,7 @@ export default function DropDownBulan({ value, onChange }) {
     const [isOpen, setIsOpen] = useState(false);
 
     const months = [
-        { id: "all", name: "Semua Bulan", value: null },
+        { id: "all", name: "Semua Bulan", value: "all" },
         { id: 1, name: "Januari", value: 1 },
         { id: 2, name: "Februari", value: 2 },
         { id: 3, name: "Maret", value: 3 },
@@ -32,7 +32,7 @@ export default function DropDownBulan({ value, onChange }) {
                         onClick={() => setIsOpen(!isOpen)}
                         className="bg-white gap-2 px-2 sm:px-4 py-2 sm:py-2 text-lg rounded-xl w-full flex items-center text-heading justify-between cursor-pointer select-none"
                     >
-                        <span className={value ? "text-gray-700" : "text-gray-500"}>
+                        <span className="text-gray-700 truncate">
                             {selectedLabel}
                         </span>
                         <RiArrowDropDownLine
