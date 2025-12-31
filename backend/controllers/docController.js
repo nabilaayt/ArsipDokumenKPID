@@ -19,8 +19,8 @@ exports.getDokumen = (req, res) => {
     }
 
     if (bulan && bulan !== 'all') {
-        sql += " AND MONTH(tanggal_dokumen) = ? AND YEAR(tanggal_dokumen) = ?";
-        params.push(bulan, tahun);
+        sql += " AND MONTH(tanggal_dokumen) = ?";
+        params.push(bulan);
     }
     
     if (tahun && tahun !== 'all') {
@@ -43,12 +43,8 @@ exports.getDokumen = (req, res) => {
 
     db.query(sql, params, (err, fields) => {
         if (err) return response(500, err.message, "Database Error", res);
-        
-        if (fields.length > 0) {
-            response(200, fields, "Berhasil mengambil dokumen", res);
-        } else {
-            response(404, [], "Data tidak ditemukan", res);
-        }
+
+        response(200, fields, "Berhasil mengambil dokumen", res);
     });
 };
 
