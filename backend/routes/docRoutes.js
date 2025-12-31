@@ -13,7 +13,7 @@ router.get('/stats', docController.getStats);
 // Route Download File
 router.get('/download/:filename', (req, res) => {
     // Pastikan folder sesuai dengan struktur (backend/upload)
-    const filePath = path.join(__dirname, '../upload', req.params.filename);
+    const filePath = path.join(__dirname, '../uploads', req.params.filename);
     
     res.download(filePath, (err) => {
         if (err) {

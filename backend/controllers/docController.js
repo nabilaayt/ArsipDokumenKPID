@@ -1,6 +1,12 @@
 const db = require('../config/db');
 const response = require('../response');
 
+const path = require('path');
+const fs = require('fs');
+const { exec } = require('child_process');
+
+// CRUD DOKUMEN
+
 // Ambil Semua Dokumen (Dengan Search & Filter)
 exports.getDokumen = (req, res) => {
     const { prioritas, bulan, tahun, search } = req.query;
@@ -130,6 +136,8 @@ exports.deleteDokumen = (req, res) => {
 };
 
 
+// KONVERSI FILE
+
 // --- WORD TO PDF (Auto Delete 1 Jam) ---
 exports.wordToPdf = async (req, res) => {
     try {
@@ -144,7 +152,7 @@ exports.wordToPdf = async (req, res) => {
         const cmd = `${sofficePath} --headless --convert-to pdf --outdir "${outputDir}" "${inputPath}"`;
 
         exec(cmd, (error) => {
-            if (error) return response(500, "Gagal konversi.", res);
+            if (error) return response(500, null, "Gagal konversi.", res);
 
             const tempFile = path.join(outputDir, path.basename(inputPath, path.extname(inputPath)) + ".pdf");
 
@@ -164,11 +172,11 @@ exports.wordToPdf = async (req, res) => {
                 }, 3600000); // 3.600.000 ms = 1 jam
 
             } else {
-                return response(500, "File tidak ditemukan.", res);
+                return response(500, null, "File tidak ditemukan.", res);
             }
         });
     } catch (err) {
-        return response(500, "Kesalahan sistem.", res);
+        return response(500, null, "Kesalahan sistem.", res);
     }
 };
 
