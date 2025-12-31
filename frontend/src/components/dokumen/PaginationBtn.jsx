@@ -2,7 +2,7 @@ import ReactPaginate from "react-paginate";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { motion } from "framer-motion";
 
-export default function PaginationBtn({ pageCount, onPageChange }) {
+export default function PaginationBtn({ pageCount, onPageChange, currentPage  }) {
     const paginationVariants = {
         hidden: {
             opacity: 0,
@@ -30,17 +30,18 @@ export default function PaginationBtn({ pageCount, onPageChange }) {
                 onPageChange={onPageChange}
                 pageCount={pageCount}
                 pageRangeDisplayed={5}
+                forcePage={currentPage}
                 marginPagesDisplayed={1}
 
                 breakLabel={<span className="mr-4">...</span>}
                 nextLabel={
-                    <span className="w-10 h-10 flex items-center justify-center bg-white rounded-md">
+                    <span className="w-10 h-10 flex items-center justify-center bg-white rounded-md cursor-pointer">
                         <BsChevronRight />
                     </span>
                 }
                 // onPageChange={handlePageClick}
                 previousLabel= {
-                    <span className="w-10 h-10 flex items-center justify-center bg-white rounded-md mr-4">
+                    <span className="w-10 h-10 flex items-center justify-center bg-white rounded-md mr-4 cursor-pointer">
                         <BsChevronLeft />
                     </span>
                 }

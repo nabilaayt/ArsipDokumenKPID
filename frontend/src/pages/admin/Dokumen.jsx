@@ -29,9 +29,10 @@ export default function Dokumen() {
     }, [prioritas, bulan, tahun]);
 
     // Pagination logic
+    const safeDokumen = Array.isArray(dokumen) ? dokumen : [];
+    const pageCount = Math.ceil(safeDokumen.length / ITEMS_PER_PAGE);
     const offset = currentPage * ITEMS_PER_PAGE;
-    const currentData = dokumen.slice(offset, offset + ITEMS_PER_PAGE);
-    const pageCount = Math.ceil(dokumen.length / ITEMS_PER_PAGE);
+    const currentData = safeDokumen.slice(offset, offset + ITEMS_PER_PAGE);
 
     const handlePageClick = ({ selected }) => {
         setCurrentPage(selected);

@@ -8,7 +8,6 @@ import useDoc from "../../hooks/useDoc";
 
 export default function TableDokumen({ data, loading }) {
     const { removeDokumen } = useDoc();
-    const [rowsPerPage] = useState(10);
     const location = useLocation();
     const isAdmin = location.pathname.startsWith("/admin");
 
@@ -55,7 +54,7 @@ export default function TableDokumen({ data, loading }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {data?.slice(0, rowsPerPage).map((doc) => (
+                        {data?.map((doc) => (
                             <tr key={doc.id} className="border-b border-gray-200 relative">
                                 <td className="py-4 px-4 whitespace-nowrap text-lg text-gray-600">{doc.nomor_dokumen}</td>
                                 <td className="py-4 px-4 whitespace-nowrap text-lg text-gray-600">{doc.tanggal_dokumen}</td>

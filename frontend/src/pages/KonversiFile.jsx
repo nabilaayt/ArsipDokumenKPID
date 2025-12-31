@@ -5,30 +5,11 @@ import { SlCloudUpload } from "react-icons/sl";
 import { FiDownload } from "react-icons/fi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { LuCheck } from "react-icons/lu";
+import useConvertFile from "../hooks/useConvertFile";
 
 export default function KonversiFile() {
     const [activeType, setActiveType] = useState(null);
-    const [files, setFiles] = useState([
-        {
-            id: 1,
-            name: "Undangan Rapat Evaluasi.docx",
-            size: "3.1 MB",
-            status: "done", // done | converting
-        },
-        {
-            id: 2,
-            name: "Laporan Kegiatan Bulanan.docx",
-            size: "2.4 MB",
-            status: "done",
-        },
-        {
-            id: 3,
-            name: "Notulensi Rapat Internal.docx",
-            size: "1.9 MB",
-            status: "converting",
-        },
-    ]);
-
+    const {files, convertFile, loading} = useConvertFile();
 
     return(
         <section id="konversiFile" className="font-poppins bg-babyBlue relative w-full flex min-h-screen overflow-hidden">
@@ -102,6 +83,11 @@ export default function KonversiFile() {
                                             activeType === "wordToPdf" ? ".doc, .docx" : ".pdf"
                                         }
                                         className="hidden"
+                                        onChange={(e) => {
+                                            if(!e.target.files[0]) return;
+                                            convertFile(e.target.files[0], activeType);
+                                            e.target.value = "";
+                                        }}
                                     />
                                 </label>
 
@@ -145,9 +131,14 @@ export default function KonversiFile() {
                                                 <div className="flex items-center justify-between sm:justify-end gap-4">
                                                     <span className="text-gray-500 text-base">{file.size}</span>
                                                     {file.status === "done" && (
-                                                        <button className="p-2 rounded-lg bg-white cursor-pointer transition">
+                                                        <a 
+                                                            href={file.downloadUrl}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="p-2 rounded-lg bg-white cursor-pointer transition"
+                                                        >
                                                             <FiDownload size={18} />
-                                                        </button>
+                                                        </a>
                                                     )}
                                                 </div>
                                             </div>
