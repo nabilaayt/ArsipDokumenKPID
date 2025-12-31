@@ -38,11 +38,7 @@ export default function DropDownPrioritas({value, onChange}) {
                                         onChange(item.value);
                                         setOpen(false);
                                     }}
-                                    className={`px-4 py-2 cursor-pointer hover:bg-babyBlue ${
-                                        value === item.value
-                                            ? "bg-babyBlue font-medium"
-                                            : ""
-                                    }`}
+                                    className="px-4 py-2 hover:bg-babyBlue cursor-pointer"
                                 >
                                     {item.label}
                                 </div>

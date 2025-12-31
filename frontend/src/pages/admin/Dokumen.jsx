@@ -15,7 +15,8 @@ export default function Dokumen() {
     const [prioritas, setPrioritas] = useState("all");
     const [bulan, setBulan] = useState("all");
     const [tahun, setTahun] = useState("all");
-    // const [tahun, setTahun] = useState(new Date().getFullYear());
+    const [currentPage, setCurrentPage] = useState(0);
+    const ITEMS_PER_PAGE = 10;
 
     useEffect(() => {
         const params = {};
@@ -26,6 +27,15 @@ export default function Dokumen() {
 
         fetchDokumen(params);
     }, [prioritas, bulan, tahun]);
+
+    // Pagination logic
+    const offset = currentPage * ITEMS_PER_PAGE;
+    const currentData = dokumen.slice(offset, offset + ITEMS_PER_PAGE);
+    const pageCount = Math.ceil(dokumen.length / ITEMS_PER_PAGE);
+
+    const handlePageClick = ({ selected }) => {
+        setCurrentPage(selected);
+    };
 
     return (
         <section id="adminDashboard" className="font-poppins bg-babyBlue relative w-full flex min-h-screen overflow-hidden">
@@ -38,18 +48,27 @@ export default function Dokumen() {
                     <div className="flex flex-col px-4 sm:px-6 lg:px-10 gap-4 mt-8 mb-5">
                         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
                             <h1 className="text-gray-950 text-2xl font-semibold">Dokumen</h1>
-                            <div className="flex flex-col sm:flex-row w-full lg:w-auto gap-5">
+                            <div className="flex flex-col md:flex-row w-full lg:w-auto gap-5">
                                 <DropDownPrioritas
                                     value={prioritas}
-                                    onChange={setPrioritas}
+                                    onChange={(val) => {
+                                        setPrioritas(val);
+                                        setCurrentPage(0);
+                                    }}
                                 />
                                 <DropDownBulan
                                     value={bulan}
-                                    onChange={setBulan}
+                                    onChange={(val) => {
+                                        setBulan(val);
+                                        setCurrentPage(0);
+                                    }}
                                 />
                                 <DropDownTahun
                                     value={tahun}
-                                    onChange={setTahun}
+                                    onChange={(val) => {
+                                        setTahun(val);
+                                        setCurrentPage(0);
+                                    }}
                                 />
                                 <div className="flex flex-row gap-3 w-full items-center justify-center text-white px-4 py-2 rounded-xl bg-red hover:scale-[1.02] transition-transform cursor-pointer">
                                     <IoAddOutline size={24} />
@@ -64,10 +83,15 @@ export default function Dokumen() {
                         </div>
                         <div className="flex flex-col gap-6">
                             <TableDokumen
-                                data={dokumen}
+                                data={currentData}
                                 loading={loading}
                             />
-                            <PaginationBtn />
+                            {pageCount > 1 && (
+                                <PaginationBtn 
+                                    pageCount={pageCount}
+                                    onPageChange={handlePageClick}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>
