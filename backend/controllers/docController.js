@@ -9,8 +9,8 @@ const { exec } = require('child_process');
 
 // Ambil Semua Dokumen (Dengan Search & Filter)
 exports.getDokumen = (req, res) => {
-    const { prioritas, bulan, tahun, search } = req.query;
-    
+    const { prioritas, bulan, tahun, search, limit } = req.query;
+
     let sql = `
         SELECT id, nomor_dokumen, asal_dokumen, perihal, prioritas, file_url,
         DATE_FORMAT(tanggal_dokumen, '%d-%m-%Y') AS tanggal_dokumen, 
@@ -28,7 +28,7 @@ exports.getDokumen = (req, res) => {
         sql += " AND MONTH(tanggal_dokumen) = ?";
         params.push(bulan);
     }
-    
+
     if (tahun && tahun !== 'all') {
         sql += " AND YEAR(tanggal_dokumen) = ?";
         params.push(tahun);
@@ -47,10 +47,14 @@ exports.getDokumen = (req, res) => {
 
     sql += " ORDER BY id DESC";
 
-    db.query(sql, params, (err, fields) => {
-        if (err) return response(500, err.message, "Database Error", res);
+    if (limit) {
+        sql += " LIMIT ?";
+        params.push(Number(limit));
+    }
 
-        response(200, fields, "Berhasil mengambil dokumen", res);
+    db.query(sql, params, (err, result) => {
+        if (err) return response(500, err.message, "Database Error", res);
+        response(200, result, "Berhasil mengambil dokumen", res);
     });
 };
 
@@ -81,9 +85,12 @@ exports.getDokumenById = (req, res) => {
 exports.getStats = (req, res) => {
     const sql = `
         SELECT 
-            (SELECT COUNT(*) FROM dokumen) AS total,
-            (SELECT COUNT(*) FROM dokumen WHERE prioritas = 'Tinggi') AS urgent
+            COUNT(*) AS total,
+            SUM(CASE WHEN prioritas = 'Tinggi' THEN 1 ELSE 0 END) AS tinggi,
+            SUM(CASE WHEN prioritas = 'Normal' THEN 1 ELSE 0 END) AS normal
+        FROM dokumen
     `;
+
     db.query(sql, (err, result) => {
         if (err) return response(500, err.message, "Gagal memuat statistik", res);
         response(200, result[0], "Statistik Dashboard", res);

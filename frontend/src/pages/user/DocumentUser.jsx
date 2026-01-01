@@ -4,7 +4,7 @@ import DropDownBulan from "../../components/dokumen/DropDownBulan";
 import DropDownTahun from "../../components/dokumen/DropDownTahun";
 import SideBar from "../../components/SideBar";
 import Topbar from "../../components/TopBar";
-import TableDokumen from "../../components/dokumen/TableDokumen";
+import TableDokumen from "../../components/dokumen/TableDocumet";
 import PaginationBtn from "../../components/dokumen/PaginationBtn";
 import useDoc from "../../hooks/useDoc";
 

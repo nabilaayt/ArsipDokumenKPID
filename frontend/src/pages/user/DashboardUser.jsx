@@ -3,15 +3,21 @@ import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import SideBar from "../../components/SideBar";
 import Topbar from "../../components/TopBar";
+import useDoc from "../../hooks/useDoc";
+import NewDocumentTable from "../../components/dokumen/NewDocumentTable";
 
 export default function Dashboard() {
     const [user, setUser] = useState(null);
+    const {stats, fetchStats, dokumen, fetchDokumen} = useDoc();
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if(storedUser) {
             setUser(JSON.parse(storedUser));
         }
+
+        fetchStats();
+        fetchDokumen({ limit: 5 }, { keepLimit: true });
     }, []);
 
     return(
@@ -25,7 +31,7 @@ export default function Dashboard() {
                     <div className="flex flex-col px-4 sm:px-6 lg:px-10 gap-4 mt-8 mb-5">
                         <div className="flex flex-col gap-4 mb-8">
                             <h1 className="text-gray-700 text-2xl font-semibold">Halo, selamat datang kembali {user?.name}</h1>
-                            <p className="text-gray-500 text-lg leading-relaxed">Selamat datang di arsip dokumen Komisi Penyiaran Daerah Sumatera Selatan</p>
+                            <p className="text-gray-500 text-lg leading-relaxed">Selamat datang di arsip dokumen Komisi Penyiaran Daerah Sumatera Selatan.</p>
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-5 sm:gap-10 mb-10">
@@ -36,7 +42,7 @@ export default function Dashboard() {
                                     className="w-16 h-16"
                                 />
                                 <div className="flex flex-col gap-3">
-                                    <h3 className="text-xl font-medium text-gray-700">20 Dokumen</h3>
+                                    <h3 className="text-xl font-medium text-gray-700">{stats?.total ?? 0} Dokumen</h3>
                                     <p className="text-gray-500 text-lg">Total Dokumen</p>
                                 </div>
                             </div>
@@ -47,7 +53,7 @@ export default function Dashboard() {
                                     className="w-16 h-16"
                                 />
                                 <div className="flex flex-col gap-3">
-                                    <h3 className="text-xl font-medium text-gray-700">20 Dokumen</h3>
+                                    <h3 className="text-xl font-medium text-gray-700">{stats?.urgent ?? 0} Dokumen</h3>
                                     <p className="text-gray-500 text-lg">Total Dokumen Prioritas Tinggi</p>
                                 </div>
                             </div>
@@ -58,7 +64,7 @@ export default function Dashboard() {
                                 <h1 className="text-2xl text-gray-700 font-semibold">Dokumen Terbaru</h1>
                                 <div className="flex flex-row gap-2 items-center group cursor-pointer">
                                     <NavLink 
-                                        to="/admin/dokumen"
+                                        to="/user/dokumen"
                                         className="text-lg text-gray-700 group-hover:text-red transition-colors"
                                     >
                                         Lihat semua 
@@ -69,6 +75,7 @@ export default function Dashboard() {
                                     />
                                 </div>
                             </div>
+                            <NewDocumentTable data={dokumen} />
                         </div>
 
                     </div>

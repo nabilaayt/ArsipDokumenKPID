@@ -13,11 +13,17 @@ export default function useDoc() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const fetchDokumen = async (params = {}) => {
+    const fetchDokumen = async (params = {}, options = {}) => {
         try {
             setLoading(true);
             const res = await getDokumen(params);
-            setDokumen(Array.isArray(res.data.payload) ? res.data.payload : []);
+            const data = Array.isArray(res.data.payload) ? res.data.payload : [];
+
+            if (options.keepLimit && params.limit) {
+                setDokumen(data.slice(0, params.limit));
+            } else {
+                setDokumen(data);
+            }
         } catch (error) {
             setError(error);
         } finally {
@@ -28,7 +34,7 @@ export default function useDoc() {
     const fetchStats = async () => {
         try {
             const res = await getStats();
-            setStats(res.data.data);
+            setStats(res.data.payload);
         } catch (error) {
             console.error("Gagal mengambil stats:", error);
         }

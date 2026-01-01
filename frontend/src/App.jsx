@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import { createContext } from "react";
 import { Toaster } from "react-hot-toast";
 
 // Pages Public
@@ -8,13 +7,13 @@ import KonversiFile from "./pages/KonversiFile";
 
 // Pages Admin
 import AdminDashboard from "./pages/admin/Dashboard";
-import AdminDokumen from "./pages/admin/Dokumen";
-import AddDokumen from "./pages/admin/AddDokumen";
+import AdminDokumen from "./pages/admin/Document";
+import AddDokumen from "./pages/admin/AddDocument";
 
 // Pages User
 import DashboardUser from "./pages/user/DashboardUser";
-import DokumenUser from "./pages/user/DokumenUser";
-import EditDokumen from "./pages/admin/EditDokumen";
+import DokumenUser from "./pages/user/DocumentUser";
+import EditDokumen from "./pages/admin/EditDocument";
 
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
