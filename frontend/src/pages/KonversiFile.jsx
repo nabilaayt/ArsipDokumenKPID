@@ -12,16 +12,15 @@ export default function KonversiFile() {
     const {files, convertFile, loading} = useConvertFile();
     const activeFiles = activeType ? files[activeType] : [];
 
-
-    const getConvertedFileName = (name, type) => {
-        if (type === "wordToPdf") {
-            return name.replace(/\.(doc|docx)$/i, ".pdf");
-        }
-        if (type === "pdfToWord") {
-            return name.replace(/\.pdf$/i, ".docx");
-        }
-        return name;
-    };
+    // const getConvertedFileName = (name, type) => {
+    //     if (type === "wordToPdf") {
+    //         return name.replace(/\.(doc|docx)$/i, ".pdf");
+    //     }
+    //     if (type === "pdfToWord") {
+    //         return name.replace(/\.pdf$/i, ".docx");
+    //     }
+    //     return name;
+    // };
     
     const handleDownloadAll = async () => {
         const doneFiles = activeFiles.filter(f => f.status === "done");
@@ -35,7 +34,7 @@ export default function KonversiFile() {
                 const link = document.createElement("a");
 
                 link.href = url;
-                link.download = getConvertedFileName(file.name, activeType);
+                link.download = file.convertedName || file.name;
 
                 document.body.appendChild(link);
                 link.click();
@@ -169,14 +168,24 @@ export default function KonversiFile() {
                                                 <div className="flex items-center justify-between sm:justify-end gap-4">
                                                     <span className="text-gray-500 text-base">{file.size}</span>
                                                     {file.status === "done" && (
-                                                        <a 
-                                                            href={file.downloadUrl}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="p-2 rounded-lg bg-white cursor-pointer transition"
+                                                        <button
+                                                            onClick={async () => {
+                                                                const res = await fetch(file.downloadUrl);
+                                                                const blob = await res.blob();
+
+                                                                const url = URL.createObjectURL(blob);
+                                                                const a = document.createElement("a");
+                                                                a.href = url;
+                                                                a.download = file.convertedName; // ✅ FIX
+                                                                document.body.appendChild(a);
+                                                                a.click();
+                                                                document.body.removeChild(a);
+                                                                URL.revokeObjectURL(url);
+                                                            }}
+                                                            className="p-2 rounded-lg bg-white"
                                                         >
                                                             <FiDownload size={18} />
-                                                        </a>
+                                                        </button>
                                                     )}
                                                 </div>
                                             </div>

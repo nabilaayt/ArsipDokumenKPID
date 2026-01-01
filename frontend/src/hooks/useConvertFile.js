@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { convertPdfToWord, convertWordToPdf } from "../services/convertFile";
 
+const getConvertedFileName = (originalName, type) => {
+    if (type === "wordToPdf") {
+        return originalName.replace(/\.(doc|docx)$/i, ".pdf");
+    }
+    if (type === "pdfToWord") {
+        return originalName.replace(/\.pdf$/i, ".docx");
+    }
+    return originalName;
+};
+
 export default function useConvertFile() {
     const [files, setFiles] = useState({
         wordToPdf: [],
@@ -15,6 +25,7 @@ export default function useConvertFile() {
         const newFile = {
             id,
             name: file.name,
+            convertedName: getConvertedFileName(file.name, type),
             size: (file.size / (1024 * 1024)).toFixed(1) + " MB",
             status: "converting",
             downloadUrl: null,
@@ -39,7 +50,11 @@ export default function useConvertFile() {
                 ...prev,
                 [type]: prev[type].map(f =>
                     f.id === id
-                        ? { ...f, status: "done", downloadUrl: url }
+                        ? { 
+                            ...f, 
+                            status: "done", 
+                            downloadUrl: url,
+                        }
                         : f
                 )
             }));
