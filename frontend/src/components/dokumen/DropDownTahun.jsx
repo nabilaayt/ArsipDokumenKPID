@@ -8,7 +8,7 @@ export default function DropDownTahun({ value, onChange }) {
 
     const years = [
         { id: "all", name: "Semua Tahun", value: "all" },
-        ...Array.from({ length: 5 }, (_, i) => {
+        ...Array.from({ length: 25 }, (_, i) => {
             const year = currentYear - i;
             return { id: year, name: `${year}`, value: year };
         }),

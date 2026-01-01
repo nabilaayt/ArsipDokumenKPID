@@ -11,16 +11,6 @@ export default function KonversiFile() {
     const [activeType, setActiveType] = useState(null);
     const {files, convertFile, loading} = useConvertFile();
     const activeFiles = activeType ? files[activeType] : [];
-
-    // const getConvertedFileName = (name, type) => {
-    //     if (type === "wordToPdf") {
-    //         return name.replace(/\.(doc|docx)$/i, ".pdf");
-    //     }
-    //     if (type === "pdfToWord") {
-    //         return name.replace(/\.pdf$/i, ".docx");
-    //     }
-    //     return name;
-    // };
     
     const handleDownloadAll = async () => {
         const doneFiles = activeFiles.filter(f => f.status === "done");
@@ -176,13 +166,13 @@ export default function KonversiFile() {
                                                                 const url = URL.createObjectURL(blob);
                                                                 const a = document.createElement("a");
                                                                 a.href = url;
-                                                                a.download = file.convertedName; // ✅ FIX
+                                                                a.download = file.convertedName;
                                                                 document.body.appendChild(a);
                                                                 a.click();
                                                                 document.body.removeChild(a);
                                                                 URL.revokeObjectURL(url);
                                                             }}
-                                                            className="p-2 rounded-lg bg-white"
+                                                            className="p-2 rounded-lg bg-white cursor-pointer"
                                                         >
                                                             <FiDownload size={18} />
                                                         </button>
