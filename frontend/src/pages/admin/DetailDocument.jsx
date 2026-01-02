@@ -7,9 +7,13 @@ import { useState, useEffect } from "react";
 import { getDokumenById, updateDokumen } from "../../services/document";
 import DropDownPrioritasForm from "../../components/dokumen/DropDownPrioritasForm";
 
-export default function EditDokumen() {
+export default function DetailDocument() {
     const { id } = useParams();
     const navigate = useNavigate();
+
+    const role = localStorage.getItem("role");
+    const isReadOnly = role === "user";
+
     const [loading, setLoading] = useState(true);
     const [form, setForm] = useState({
         nomor_dokumen: "",
@@ -49,6 +53,7 @@ export default function EditDokumen() {
     }, [id]);
 
     const handleChange = (e) => {
+        if (isReadOnly) return;
         setForm({
             ...form,
             [e.target.id]: e.target.value,
@@ -56,6 +61,7 @@ export default function EditDokumen() {
     };
 
     const handleFileChange = (e) => {
+        if (isReadOnly) return;
         setForm({
             ...form,
             file: e.target.files[0],
@@ -64,6 +70,7 @@ export default function EditDokumen() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if(isReadOnly) return;
 
         const formData = new FormData();
 
@@ -102,8 +109,8 @@ export default function EditDokumen() {
                 <div className="flex-1 px-4 sm:px-6 lg:px-10">
                     <div className="flex flex-col w-full relative rounded-2xl p-6 sm:p-8 md:p-10 bg-white gap-10 z-10 mb-5 mt-10">
                         <div className="flex flex-col gap-4">
-                            <h1 className="text-2xl text-gray-700 font-bold">Edit Dokumen</h1>
-                            <p className="text-lg text-gray-500">Perbarui data dokumen yang sudah tersimpan.</p>
+                            <h1 className="text-2xl text-gray-700 font-bold">{isReadOnly ? "Detail Dokumen" : "Edit Dokumen"}</h1>
+                            <p className="text-lg text-gray-500">{isReadOnly ? "Dokumen hanya dapat dilihat" : "Perbarui data dokumen yang sudah tersimpan."}</p>
                         </div>
                         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             <div className="flex flex-col gap-6">
@@ -114,8 +121,13 @@ export default function EditDokumen() {
                                             id="nomor_dokumen"
                                             value={form.nomor_dokumen}
                                             onChange={handleChange}
+                                            readOnly={isReadOnly}
                                             placeholder="Masukkan nomor dokumen"
-                                            className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
+                                            className={`w-full rounded-xl px-5 py-3 text-lg 
+                                                ${isReadOnly 
+                                                    ? "text-gray-500 cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-gray-700"
+                                                    : "bg-babyBlue"
+                                                }`}
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
@@ -125,8 +137,13 @@ export default function EditDokumen() {
                                             id="asal_dokumen"
                                             value={form.asal_dokumen}
                                             onChange={handleChange}
+                                            readOnly={isReadOnly}
                                             placeholder="Masukkan asal dokumen"
-                                            className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
+                                            className={`w-full rounded-xl px-5 py-3 text-lg 
+                                                ${isReadOnly 
+                                                    ? "text-gray-500 cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-gray-700"
+                                                    : "bg-babyBlue"
+                                                }`}
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
@@ -136,14 +153,20 @@ export default function EditDokumen() {
                                             id="perihal"
                                             value={form.perihal}
                                             onChange={handleChange}
+                                            readOnly={isReadOnly}
                                             placeholder="Masukkan perihal dokumen"
-                                            className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
+                                            className={`w-full rounded-xl px-5 py-3 text-lg 
+                                                ${isReadOnly 
+                                                    ? "text-gray-500 cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-gray-700"
+                                                    : "bg-babyBlue"
+                                                }`}
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
                                     <label htmlFor="prioritas" className="text-lg font-medium text-gray-700">Prioritas</label>
                                     <DropDownPrioritasForm 
                                         value={form.prioritas}
+                                        disabled={isReadOnly}
                                         onChange={(value) =>
                                             setForm((prev) => ({
                                                 ...prev,
@@ -162,8 +185,13 @@ export default function EditDokumen() {
                                             id="tanggal_dokumen"
                                             value={form.tanggal_dokumen}
                                             onChange={handleChange}
+                                            disabled={isReadOnly}
                                             placeholder="Masukkan tanggal dokumen"
-                                            className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
+                                            className={`w-full rounded-xl px-5 py-3 text-lg 
+                                                ${isReadOnly 
+                                                    ? "text-gray-500 cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-gray-700"
+                                                    : "bg-babyBlue"
+                                                }`}
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
@@ -173,13 +201,24 @@ export default function EditDokumen() {
                                             id="tanggal_diterima"
                                             value={form.tanggal_diterima}
                                             onChange={handleChange}
+                                            disabled={isReadOnly}
                                             placeholder="Masukkan tanggal dokumen"
-                                            className="w-full rounded-xl px-5 py-3 text-lg text-gray-500 bg-babyBlue focus:outline-none focus:ring-1 focus:ring-gray-700"
+                                            className={`w-full rounded-xl px-5 py-3 text-lg 
+                                                ${isReadOnly 
+                                                    ? "text-gray-500 cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-gray-700"
+                                                    : "bg-babyBlue"
+                                                }`}
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
-                                    <label htmlFor="file" className="text-lg font-medium text-heading">Unggah Dokumen</label>
-                                    <label htmlFor="file"  className="relative flex flex-col items-center justify-center w-full h-42 bg-babyBlue border-2 border-dashed border-gray-700 rounded-2xl cursor-pointer hover:border-gray-700 transition-colors">
+                                    <label htmlFor={isReadOnly ? undefined : "file"} className="text-lg font-medium text-heading">Unggah Dokumen</label>
+                                    <label
+                                    htmlFor={isReadOnly ? undefined : "file"}
+                                    className={`relative flex flex-col items-center justify-center w-full h-42 
+                                        bg-babyBlue border-2 border-dashed border-gray-700 rounded-2xl
+                                        ${isReadOnly ? "pointer-events-none opacity-70" : "cursor-pointer"}
+                                    `}
+                                    >
                                         <div className="flex flex-col items-center justify-center gap-3 py-6">
                                             {/* File Baru */}
                                             {form.file? (
@@ -217,25 +256,29 @@ export default function EditDokumen() {
                                             id="file"
                                             accept=".pdf,.doc,.docx"
                                             onChange={handleFileChange}
+                                            disabled={isReadOnly}
                                             className="hidden"
                                         />
                                     </label>
                                 </div>
                             </div>
-                            <div className="flex flex-row w-full gap-5 items-center mt-6">
-                                <button
-                                    type="submit"
-                                    className="bg-red text-white text-lg font-medium rounded-2xl px-5 py-3 w-full hover:scale-[1.02] transition-transform cursor-pointer"
-                                >
-                                    Perbarui
-                                </button>
-                                <NavLink
-                                    to={`/admin/editDokumen/${id}`}
-                                    className="bg-babyBlue text-center text-lg font-medium w-full text-gray-700 px-5 py-3 rounded-2xl hover:scale-[1.02] transition-transform cursor-pointer"
-                                >
-                                    Batal
-                                </NavLink>
-                            </div>
+
+                            {!isReadOnly && (
+                                <div className="flex flex-row w-full gap-5 items-center mt-6">
+                                    <button
+                                        type="submit"
+                                        className="bg-red text-white text-lg font-medium rounded-2xl px-5 py-3 w-full hover:scale-[1.02] transition-transform cursor-pointer"
+                                    >
+                                        Perbarui
+                                    </button>
+                                    <NavLink
+                                        to={`/admin/editDokumen/${id}`}
+                                        className="bg-babyBlue text-center text-lg font-medium w-full text-gray-700 px-5 py-3 rounded-2xl hover:scale-[1.02] transition-transform cursor-pointer"
+                                    >
+                                        Batal
+                                    </NavLink>
+                                </div>
+                            )}
                         </form>
                     </div>
 

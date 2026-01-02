@@ -48,7 +48,7 @@ export default function KonversiFile() {
                 <div className="flex-1">
                     <div className="flex flex-col px-4 sm:px-6 lg:px-8 gap-4 mt-8 mb-5">
                         <div className="flex flex-col gap-4 mb-8">
-                            <h1 className="text-gray-950 text-2xl font-semibold">Konversi File</h1>
+                            <h1 className="text-gray-700 text-2xl font-semibold">Konversi File</h1>
                             <p className="text-gray-500 text-lg leading-relaxed">Fitur konversi dokumen untuk mendukung efisiensi pengelolaan arsip dan administrasi KPID Sumatera Selatan.</p>
                         </div>
 

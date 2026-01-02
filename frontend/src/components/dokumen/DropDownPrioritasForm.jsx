@@ -34,7 +34,7 @@ export default function DropDownPrioritasForm({ value, onChange }) {
                                         onChange(opt.name);
                                         setIsDropdownVisible(false);
                                     }}
-                                    className="px-5 py-3 hover:bg-white cursor-pointer"
+                                    className="px-5 py-3 hover:bg-white transition cursor-pointer"
                                 >
                                     {opt.name}
                                 </div>

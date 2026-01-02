@@ -6,14 +6,14 @@ import Login from "./pages/Login";
 import KonversiFile from "./pages/KonversiFile";
 
 // Pages Admin
-import AdminDashboard from "./pages/admin/Dashboard";
-import AdminDokumen from "./pages/admin/Document";
+import AdminDashboard from "./pages/admin/DashboardAdmin";
+import AdminDokumen from "./pages/admin/DocumentAdmin";
 import AddDokumen from "./pages/admin/AddDocument";
+import DetailDokumen from "./pages/admin/DetailDocument";
 
 // Pages User
 import DashboardUser from "./pages/user/DashboardUser";
 import DokumenUser from "./pages/user/DocumentUser";
-import EditDokumen from "./pages/admin/EditDocument";
 
 // Components
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -58,7 +58,7 @@ function App() {
           path="/admin/editDokumen/:id" 
           element={
           <ProtectedRoute allowedRole="admin">
-              <EditDokumen />
+              <DetailDokumen />
             </ProtectedRoute>
           }
         />
@@ -85,6 +85,14 @@ function App() {
           element={
             <ProtectedRoute allowedRole="user">
               <DokumenUser />
+            </ProtectedRoute>
+          }
+        />
+        <Route 
+          path="/user/detailDokumen/:id" 
+          element={
+          <ProtectedRoute allowedRole="user">
+              <DetailDokumen />
             </ProtectedRoute>
           }
         />

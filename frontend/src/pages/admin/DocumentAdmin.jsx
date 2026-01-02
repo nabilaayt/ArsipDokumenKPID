@@ -10,7 +10,7 @@ import PaginationBtn from "../../components/dokumen/PaginationBtn";
 import { IoAddOutline } from "react-icons/io5";
 import useDoc from "../../hooks/useDoc";
 
-export default function Dokumen() {
+export default function DocumentAdmin() {
     const { dokumen, loading, fetchDokumen } = useDoc();
     const [prioritas, setPrioritas] = useState("all");
     const [bulan, setBulan] = useState("all");
@@ -48,7 +48,7 @@ export default function Dokumen() {
                 <div className="flex-1">
                     <div className="flex flex-col px-4 sm:px-6 lg:px-10 gap-4 mt-8 mb-5">
                         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
-                            <h1 className="text-gray-950 text-2xl font-semibold">Dokumen</h1>
+                            <h1 className="text-gray-700 text-2xl font-semibold">Dokumen</h1>
                             <div className="flex flex-col md:flex-row w-full lg:w-auto gap-5">
                                 <DropDownPrioritas
                                     value={prioritas}

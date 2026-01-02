@@ -49,7 +49,7 @@ export default function DropDownBulan({ value, onChange }) {
                                         onChange(item.value);
                                         setIsOpen(false);
                                     }}
-                                    className="px-4 py-2 hover:bg-babyBlue cursor-pointer"
+                                    className="px-4 py-2 hover:bg-gray-100 transition cursor-pointer"
                                 >
                                     {item.name}
                                 </div>

@@ -94,7 +94,7 @@ export default function SideBar() {
                         alt="Logo KPID"
                         className="w-14 h-14 sm:w-15 sm:h-15 transition-transform duration-300 hover:scale-110"
                         />
-                        <h1 className={`text-heading text-2xl font-semibold transition-all duration-300 ${!open && "hidden"}`}>
+                        <h1 className={`text-gray-800 text-2xl font-semibold transition-all duration-300 ${!open && "hidden"}`}>
                         KPID SUMSEL
                         </h1>
                     </div>

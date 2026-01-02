@@ -6,7 +6,7 @@ import Topbar from "../../components/TopBar";
 import useDoc from "../../hooks/useDoc";
 import NewDocumentTable from "../../components/dokumen/NewDocumentTable";
 
-export default function DashboardUser() {
+export default function DashboardAdmin() {
     const [user, setUser] = useState(null);
     const {stats, fetchStats, dokumen, fetchDokumen} = useDoc();
 
@@ -48,12 +48,23 @@ export default function DashboardUser() {
                             </div>
                             <div className="flex flex-row gap-5 bg-white p-8 rounded-2xl">
                                 <img 
+                                    src="/assets/icons/PrioritasNormal.png" 
+                                    alt="Icon Total Dokumen" 
+                                    className="w-16 h-16"
+                                />
+                                <div className="flex flex-col gap-3">
+                                    <h3 className="text-xl font-medium text-gray-700">{stats?.normal ?? 0} Dokumen</h3>
+                                    <p className="text-gray-500 text-lg">Total Dokumen Prioritas Normal</p>
+                                </div>
+                            </div>
+                            <div className="flex flex-row gap-5 bg-white p-8 rounded-2xl">
+                                <img 
                                     src="/assets/icons/PrioritasTinggi.png" 
                                     alt="Icon Total Dokumen" 
                                     className="w-16 h-16"
                                 />
                                 <div className="flex flex-col gap-3">
-                                    <h3 className="text-xl font-medium text-gray-700">{stats?.urgent ?? 0} Dokumen</h3>
+                                    <h3 className="text-xl font-medium text-gray-700">{stats?.tinggi ?? 0} Dokumen</h3>
                                     <p className="text-gray-500 text-lg">Total Dokumen Prioritas Tinggi</p>
                                 </div>
                             </div>
