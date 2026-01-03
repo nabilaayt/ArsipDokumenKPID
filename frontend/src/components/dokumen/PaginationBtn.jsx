@@ -39,13 +39,11 @@ export default function PaginationBtn({ pageCount, onPageChange, currentPage  })
                         <BsChevronRight />
                     </span>
                 }
-                // onPageChange={handlePageClick}
                 previousLabel= {
                     <span className="w-10 h-10 flex items-center justify-center bg-white rounded-md mr-4 cursor-pointer">
                         <BsChevronLeft />
                     </span>
                 }
-                // renderOnZeroPageCount={null}
                 containerClassName="flex items-center justify-center mt-8 mb-4"
                 pageClassName="block border- border-solid border-lightGray hover:bg-white w-10 h-10 flex items-center justify-center rounded-md mr-4"
                 activeClassName="bg-red text-white"

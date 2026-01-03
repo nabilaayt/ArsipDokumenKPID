@@ -12,7 +12,7 @@ export default function DetailDocument() {
     const navigate = useNavigate();
 
     const role = localStorage.getItem("role");
-    const isReadOnly = role === "user";
+    const isReadOnly = role !== "admin";
 
     const [loading, setLoading] = useState(true);
     const [form, setForm] = useState({
@@ -31,6 +31,9 @@ export default function DetailDocument() {
             try {
                 const res = await getDokumenById(id);
                 const data = res.data.payload;
+
+                console.log("Role dari localStorage:", role);
+                console.log("isReadOnly:", isReadOnly);
 
                 setForm({
                     nomor_dokumen: data.nomor_dokumen,
@@ -70,14 +73,15 @@ export default function DetailDocument() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if(isReadOnly) return;
+
+        if (role !== "admin") {
+            toast.error("Anda tidak memiliki izin mengedit dokumen");
+            return;
+        }
 
         const formData = new FormData();
-
-        Object.entries(form).forEach(([key, value]) => {
-            if(value !== null) {
-                formData.append(key, value);
-            }
+            Object.entries(form).forEach(([key, value]) => {
+            if (value !== null) formData.append(key, value);
         });
 
         try {
@@ -86,7 +90,6 @@ export default function DetailDocument() {
             navigate("/admin/dokumen");
         } catch (error) {
             toast.error("Gagal update dokumen");
-            console.error(error);
         }
     };
 
@@ -96,7 +99,7 @@ export default function DetailDocument() {
     };
 
     if (loading) {
-    return <p className="p-8 text-center">Memuat data dokumen...</p>;
+        return <p className="p-8 text-center">Memuat data dokumen...</p>;
     }
 
     return(
@@ -110,9 +113,15 @@ export default function DetailDocument() {
                     <div className="flex flex-col w-full relative rounded-2xl p-6 sm:p-8 md:p-10 bg-white gap-10 z-10 mb-5 mt-10">
                         <div className="flex flex-col gap-4">
                             <h1 className="text-2xl text-gray-700 font-bold">{isReadOnly ? "Detail Dokumen" : "Edit Dokumen"}</h1>
-                            <p className="text-lg text-gray-500">{isReadOnly ? "Dokumen hanya dapat dilihat" : "Perbarui data dokumen yang sudah tersimpan."}</p>
+                            <p className="text-lg text-gray-500">
+                                {isReadOnly 
+                                    ? "Dokumen hanya dapat dilihat" 
+                                    : "Perbarui data dokumen yang sudah tersimpan."}
+                            </p>
                         </div>
                         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                            {/* Side Left */}
                             <div className="flex flex-col gap-6">
                                 <div className="flex flex-col gap-3 w-full">
                                     <label htmlFor="nomor_dokumen" className="text-lg font-medium text-gray-700">Nomor Dokumen</label>
@@ -121,13 +130,13 @@ export default function DetailDocument() {
                                             id="nomor_dokumen"
                                             value={form.nomor_dokumen}
                                             onChange={handleChange}
-                                            readOnly={isReadOnly}
+                                            disabled={isReadOnly}
                                             placeholder="Masukkan nomor dokumen"
-                                            className={`w-full rounded-xl px-5 py-3 text-lg 
-                                                ${isReadOnly 
-                                                    ? "text-gray-500 cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-gray-700"
-                                                    : "bg-babyBlue"
-                                                }`}
+                                            className={`w-full rounded-xl px-5 py-3 text-base outline-none
+                                                ${isReadOnly
+                                                ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+                                                : "bg-babyBlue focus:ring-1 focus:ring-gray-700"}
+                                            `}
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
@@ -137,13 +146,13 @@ export default function DetailDocument() {
                                             id="asal_dokumen"
                                             value={form.asal_dokumen}
                                             onChange={handleChange}
-                                            readOnly={isReadOnly}
+                                            disabled={isReadOnly}
                                             placeholder="Masukkan asal dokumen"
-                                            className={`w-full rounded-xl px-5 py-3 text-lg 
-                                                ${isReadOnly 
-                                                    ? "text-gray-500 cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-gray-700"
-                                                    : "bg-babyBlue"
-                                                }`}
+                                            className={`w-full rounded-xl px-5 py-3   text-base outline-none
+                                                ${isReadOnly
+                                                ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+                                                : "bg-babyBlue focus:ring-1 focus:ring-gray-700"}
+                                            `}
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
@@ -153,13 +162,13 @@ export default function DetailDocument() {
                                             id="perihal"
                                             value={form.perihal}
                                             onChange={handleChange}
-                                            readOnly={isReadOnly}
+                                            disabled={isReadOnly}
                                             placeholder="Masukkan perihal dokumen"
-                                            className={`w-full rounded-xl px-5 py-3 text-lg 
-                                                ${isReadOnly 
-                                                    ? "text-gray-500 cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-gray-700"
-                                                    : "bg-babyBlue"
-                                                }`}
+                                            className={`w-full rounded-xl px-5 py-3 text-base outline-none
+                                                ${isReadOnly
+                                                ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+                                                : "bg-babyBlue focus:ring-1 focus:ring-gray-700"}
+                                            `}
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
@@ -177,6 +186,7 @@ export default function DetailDocument() {
                                 </div>
                             </div>
 
+                            {/* Side Right */}
                             <div className="flex flex-col gap-6">
                                 <div className="flex flex-col gap-3 w-full">
                                     <label htmlFor="tanggal_dokumen" className="text-lg font-medium text-gray-700">Tanggal Dokumen</label>
@@ -187,11 +197,11 @@ export default function DetailDocument() {
                                             onChange={handleChange}
                                             disabled={isReadOnly}
                                             placeholder="Masukkan tanggal dokumen"
-                                            className={`w-full rounded-xl px-5 py-3 text-lg 
-                                                ${isReadOnly 
-                                                    ? "text-gray-500 cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-gray-700"
-                                                    : "bg-babyBlue"
-                                                }`}
+                                            className={`w-full rounded-xl px-5 py-3 text-base outline-none
+                                                ${isReadOnly
+                                                ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+                                                : "bg-babyBlue focus:ring-1 focus:ring-gray-700"}
+                                            `}
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
@@ -203,15 +213,15 @@ export default function DetailDocument() {
                                             onChange={handleChange}
                                             disabled={isReadOnly}
                                             placeholder="Masukkan tanggal dokumen"
-                                            className={`w-full rounded-xl px-5 py-3 text-lg 
-                                                ${isReadOnly 
-                                                    ? "text-gray-500 cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-gray-700"
-                                                    : "bg-babyBlue"
-                                                }`}
+                                            className={`w-full rounded-xl px-5 py-3 text-base outline-none
+                                                ${isReadOnly
+                                                ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+                                                : "bg-babyBlue focus:ring-1 focus:ring-gray-700"}
+                                            `}
                                         />                                    
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
-                                    <label htmlFor={isReadOnly ? undefined : "file"} className="text-lg font-medium text-heading">Unggah Dokumen</label>
+                                    <label className="text-lg font-medium text-heading">Unggah Dokumen</label>
                                     <label
                                     htmlFor={isReadOnly ? undefined : "file"}
                                     className={`relative flex flex-col items-center justify-center w-full h-42 
@@ -251,14 +261,15 @@ export default function DetailDocument() {
                                                 </>
                                             )}
                                         </div>
-                                        <input
-                                            type="file"
-                                            id="file"
-                                            accept=".pdf,.doc,.docx"
-                                            onChange={handleFileChange}
-                                            disabled={isReadOnly}
-                                            className="hidden"
-                                        />
+                                        {!isReadOnly && (
+                                            <input
+                                                type="file"
+                                                id="file"
+                                                accept=".pdf,.doc,.docx"
+                                                onChange={handleFileChange}
+                                                className="hidden"
+                                            />
+                                        )}
                                     </label>
                                 </div>
                             </div>
@@ -272,7 +283,7 @@ export default function DetailDocument() {
                                         Perbarui
                                     </button>
                                     <NavLink
-                                        to={`/admin/editDokumen/${id}`}
+                                        to="/admin/dokumen"
                                         className="bg-babyBlue text-center text-lg font-medium w-full text-gray-700 px-5 py-3 rounded-2xl hover:scale-[1.02] transition-transform cursor-pointer"
                                     >
                                         Batal

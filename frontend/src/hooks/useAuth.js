@@ -9,10 +9,17 @@ export default function useAuth() {
     useEffect(() => {
         const storedToken = localStorage.getItem("token");
         const storedUser = localStorage.getItem("user");
+        const storedRole = localStorage.getItem("role");
 
         if(storedToken && storedUser){
             setToken(storedToken);
-            setUser(JSON.parse(storedUser));
+            const parsedUser = JSON.parse(storedUser);
+            
+            if (!parsedUser.role && storedRole) {
+                parsedUser.role = storedRole;
+            }
+            
+            setUser(parsedUser);
         }
 
         setLoading(false);
@@ -38,6 +45,7 @@ export default function useAuth() {
 
             localStorage.setItem("token", token);
             localStorage.setItem("user", JSON.stringify(userData));
+            localStorage.setItem("role", role);
 
             setToken(token);
             setUser(userData);
@@ -66,7 +74,7 @@ export default function useAuth() {
     };
 
     const isAuth = !!token;
-    const role = user?.role || null;
+    const role = user?.role || localStorage.getItem("role") || null;
     const hasRole = (allowedRole) => role === allowedRole;
 
     return{

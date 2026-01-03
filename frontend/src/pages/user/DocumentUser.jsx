@@ -13,6 +13,8 @@ export default function DokumenUser() {
     const [prioritas, setPrioritas] = useState("all");
     const [bulan, setBulan] = useState("all");
     const [tahun, setTahun] = useState("all");
+    const [currentPage, setCurrentPage] = useState(0);
+    const ITEMS_PER_PAGE = 10;
 
     useEffect(() => {
         const params = {};
@@ -23,6 +25,16 @@ export default function DokumenUser() {
 
         fetchDokumen(params);
     }, [prioritas, bulan, tahun]);
+
+    // Pagination logic
+    const safeDokumen = Array.isArray(dokumen) ? dokumen : [];
+    const pageCount = Math.ceil(safeDokumen.length / ITEMS_PER_PAGE);
+    const offset = currentPage * ITEMS_PER_PAGE;
+    const currentData = safeDokumen.slice(offset, offset + ITEMS_PER_PAGE);
+
+    const handlePageClick = ({ selected }) => {
+        setCurrentPage(selected);
+    };
 
     return(
         <section id="userDashboard" className="font-poppins bg-babyBlue relative w-full flex min-h-screen overflow-hidden">
@@ -38,24 +50,38 @@ export default function DokumenUser() {
                             <div className="flex flex-col sm:flex-row w-full lg:w-auto gap-5">
                                 <DropDownPrioritas
                                     value={prioritas}
-                                    onChange={setPrioritas}
+                                    onChange={(val) => {
+                                        setPrioritas(val);
+                                        setCurrentPage(0);
+                                    }}
                                 />
                                 <DropDownBulan
                                     value={bulan}
-                                    onChange={setBulan}
+                                    onChange={(val) => {
+                                        setBulan(val);
+                                        setCurrentPage(0);
+                                    }}
                                 />
                                 <DropDownTahun
                                     value={tahun}
-                                    onChange={setTahun}
+                                    onChange={(val) => {
+                                        setTahun(val);
+                                        setCurrentPage(0);
+                                    }}
                                 />
                             </div>
                         </div>
                         <div className="flex flex-col gap-6">
                             <TableDokumen
-                                data={dokumen}
+                                data={currentData}
                                 loading={loading}
                             />
-                            <PaginationBtn />
+                            {pageCount > 1 && (
+                                <PaginationBtn 
+                                    pageCount={pageCount}
+                                    onPageChange={handlePageClick}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>

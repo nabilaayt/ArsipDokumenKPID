@@ -39,7 +39,7 @@ export default function SearchBar() {
 
     const handleClear = () => {
         setSearchInput("");
-        setResult("");
+        setResult([]);
         setShowDropdown(false);
     };
 
