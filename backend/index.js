@@ -8,10 +8,10 @@ const docRoutes = require('./routes/docRoutes');
 const authRoutes = require('./routes/authRoutes');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://arsipkpidsumsel.com',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,

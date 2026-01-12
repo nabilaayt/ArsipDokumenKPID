@@ -12,9 +12,11 @@ export default function TableDokumen({ data, loading }) {
     const isAdmin = location.pathname.startsWith("/admin");
 
     const handleDownload = async (doc) => {
+        const BASE_URL = import.meta.env.VITE_API_URL.replace("/api", "");
+
         try {
             const res = await fetch(
-                `http://localhost:3000/uploads/${doc.file_url}`
+                `${BASE_URL}/uploads/${doc.file_url}`
             );
 
             if (!res.ok) throw new Error("Gagal download");
