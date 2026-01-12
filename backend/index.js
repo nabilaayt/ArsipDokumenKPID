@@ -21,13 +21,17 @@ app.use(cors({
 app.use(bodyParser.json({ limit: '200mb' }));
 app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
 
+// Static frontend
 app.use(express.static(path.join(__dirname, '../public_html')));
 
+// Uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// API
 app.use('/api/auth', authRoutes);
 app.use('/api', docRoutes);
 
+// React Router fallback (HARUS DI SINI)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public_html/index.html'));
 });
@@ -40,9 +44,9 @@ app.use((err, req, res, next) => {
     res.status(500).json({ message: err.message });
 });
 
-app.use((req, res) => {
-    res.status(404).json({ message: "Endpoint tidak ditemukan!" });
-});
+// app.use((req, res) => {
+//     res.status(404).json({ message: "Endpoint tidak ditemukan!" });
+// });
 
 app.listen(port, () => {
     console.log(`Server jalan di http://localhost:${port}`);
