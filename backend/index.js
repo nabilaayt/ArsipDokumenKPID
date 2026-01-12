@@ -21,13 +21,15 @@ app.use(cors({
 app.use(bodyParser.json({ limit: '200mb' }));
 app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
 
+app.use(express.static(path.join(__dirname, '../public_html')));
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api', docRoutes);
 
-app.get('/', (req, res) => {
-    res.status(200).json({ message: "API Arsip KPID Sumsel Ready" });
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public_html/index.html'));
 });
 
 // Middleware Global Error Handling (Opsional tapi berguna untuk menangkap error Multer)
