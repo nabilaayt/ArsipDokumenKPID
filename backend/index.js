@@ -28,10 +28,8 @@ app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // API
-// app.use('/api/auth', authRoutes);
-// app.use('/api', docRoutes);
-app.use('/auth', authRoutes);
-app.use('/', docRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api', docRoutes);
 
 // React Router fallback (HARUS DI SINI)
 // app.get('*', (req, res) => {
