@@ -31,8 +31,6 @@ app.use(cors({
     // optionsSuccessStatus: 204,
 }));
 
-// app.options('*', cors());
-
 // PENTING: Tambahkan limit 200mb pada body-parser
 app.use(bodyParser.json({ limit: '200mb' }));
 app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
