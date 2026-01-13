@@ -12,12 +12,11 @@ export default function TableDokumen({ data, loading }) {
     const isAdmin = location.pathname.startsWith("/admin");
 
     const handleDownload = async (doc) => {
-        const BASE_URL = import.meta.env.VITE_API_URL.replace("/api", "");
+        // const BASE_URL = import.meta.env.VITE_API_URL.replace("/api", "");
+        const downloadUrl = `https://api.arsipkpidsumsel.com/uploads/${doc.file_url}`;
 
         try {
-            const res = await fetch(
-                `${BASE_URL}/uploads/${doc.file_url}`
-            );
+            const res = await fetch(downloadUrl);
 
             if (!res.ok) throw new Error("Gagal download");
 
