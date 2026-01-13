@@ -5,6 +5,13 @@ const path = require('path');
 const fs = require('fs');
 const { exec } = require('child_process');
 
+const cloudConvert = new CloudConvert(process.env.CLOUDCONVERT_API_KEY);
+const CloudConvert = require('cloudconvert');
+const path = require('path');
+const fs = require('fs');
+const https = require('https');
+const BASE_URL = 'https://api.arsipkpidsumsel.com';
+
 // CRUD DOKUMEN
 
 // Ambil Semua Dokumen (Dengan Search & Filter)
@@ -145,88 +152,94 @@ exports.deleteDokumen = (req, res) => {
 
 // KONVERSI FILE
 
-// --- WORD TO PDF (Auto Delete 1 Jam) ---
+// --- FUNGSI WORD KE PDF ---
 exports.wordToPdf = async (req, res) => {
     try {
-        if (!req.file) return response(400, null, "File tidak ada", res);
+        if (!req.file) return response(400, null, "File tidak ditemukan", res);
 
-        const inputPath = path.resolve(req.file.path);
-        const outputDir = path.resolve(__dirname, '../uploads/');
+        const inputPath = req.file.path;
         const outputName = `hasil-${Date.now()}.pdf`;
-        const outputPath = path.join(outputDir, outputName);
-        const sofficePath = `"C:\\Program Files\\LibreOffice\\program\\soffice.exe"`;
+        const outputPath = path.resolve(__dirname, `../uploads/${outputName}`);
 
-        const cmd = `${sofficePath} --headless --convert-to pdf --outdir "${outputDir}" "${inputPath}"`;
-
-        exec(cmd, (error) => {
-            if (error) return response(500, null, "Gagal konversi.", res);
-
-            const tempFile = path.join(outputDir, path.basename(inputPath, path.extname(inputPath)) + ".pdf");
-
-            if (fs.existsSync(tempFile)) {
-                fs.renameSync(tempFile, outputPath);
-                if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
-
-                // BALAS KE USER DULU
-                response(200, { url_download: `http://localhost:3000/uploads/${outputName}` }, "BERHASIL", res);
-
-                // JALANKAN PEMBERSIHAN OTOMATIS (1 JAM KEMUDIAN)
-                setTimeout(() => {
-                    if (fs.existsSync(outputPath)) {
-                        fs.unlinkSync(outputPath);
-                        console.log(`File sampah ${outputName} berhasil dihapus otomatis (1 jam berlalu).`);
-                    }
-                }, 3600000); // 3.600.000 ms = 1 jam
-
-            } else {
-                return response(500, null, "File tidak ditemukan.", res);
+        // Membuat tugas konversi di CloudConvert
+        const job = await cloudConvert.jobs.create({
+            "tasks": {
+                "import-1": { "operation": "import/upload" },
+                "task-1": { "operation": "convert", "input": ["import-1"], "output_format": "pdf" },
+                "export-1": { "operation": "export/url", "input": ["task-1"] }
             }
         });
+
+        // Upload file dari server Hostinger ke CloudConvert
+        const uploadTask = job.tasks.filter(t => t.name === 'import-1')[0];
+        await cloudConvert.tasks.upload(uploadTask, fs.createReadStream(inputPath), req.file.filename);
+
+        // Menunggu proses selesai dan mengambil link hasil
+        const finishedJob = await cloudConvert.jobs.wait(job.id);
+        const exportTask = finishedJob.tasks.filter(t => t.operation === 'export/url' && t.status === 'finished')[0];
+        const cloudUrl = exportTask.result.files[0].url;
+
+        // Download file dari CloudConvert ke folder uploads backend
+        const file = fs.createWriteStream(outputPath);
+        https.get(cloudUrl, (resStream) => {
+            resStream.pipe(file);
+            file.on('finish', () => {
+                file.close();
+                // Hapus file asli setelah konversi selesai
+                if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
+                
+                // Kirim URL download ke frontend menggunakan domain API
+                response(200, { url_download: `${BASE_URL}/uploads/${outputName}` }, "Konversi Berhasil", res);
+
+                // Hapus otomatis file hasil setelah 1 jam agar hosting tidak penuh
+                setTimeout(() => { 
+                    if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); 
+                }, 3600000);
+            });
+        });
     } catch (err) {
-        return response(500, null, "Kesalahan sistem.", res);
+        response(500, err.message, "Gagal Konversi Cloud", res);
     }
 };
 
-// --- PDF TO WORD (Auto Delete 1 Jam) ---
+// --- FUNGSI PDF KE WORD ---
 exports.pdfToWord = async (req, res) => {
     try {
-        if (!req.file) return response(400, null, "File tidak ada", res);
+        if (!req.file) return response(400, null, "File tidak ditemukan", res);
 
-        const inputPath = path.resolve(req.file.path);
-        const outputDir = path.resolve(__dirname, '../uploads/');
-        const baseName = path.basename(inputPath, path.extname(inputPath));
-        const tempFilePath = path.join(outputDir, `${baseName}.docx`);
-        const finalName = `hasil-${Date.now()}.docx`;
-        const finalPath = path.join(outputDir, finalName);
-        const soffice = `"C:\\Program Files\\LibreOffice\\program\\soffice.exe"`;
+        const inputPath = req.file.path;
+        const outputName = `hasil-${Date.now()}.docx`;
+        const outputPath = path.resolve(__dirname, `../uploads/${outputName}`);
 
-        const cmd = `${soffice} --headless --infilter="writer_pdf_import" --convert-to docx --outdir "${outputDir}" "${inputPath}"`;
-        
-        exec(cmd, (err) => {
-            if (err) return response(500, null, "Gagal di sistem", res);
-
-            setTimeout(() => {
-                if (fs.existsSync(tempFilePath)) {
-                    fs.renameSync(tempFilePath, finalPath);
-                    if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
-
-                    // BALAS KE USER DULU
-                    response(200, { url_download: `http://localhost:3000/uploads/${finalName}` }, "BERHASIL", res);
-
-                    // JALANKAN PEMBERSIHAN OTOMATIS (1 JAM KEMUDIAN)
-                    setTimeout(() => {
-                        if (fs.existsSync(finalPath)) {
-                            fs.unlinkSync(finalPath);
-                            console.log(`File sampah ${finalName} berhasil dihapus otomatis (1 jam berlalu).`);
-                        }
-                    }, 3600000); // 1 jam
-
-                } else {
-                    return response(500, null, "File gagal dibuat.", res);
-                }
-            }, 3000);
+        const job = await cloudConvert.jobs.create({
+            "tasks": {
+                "import-1": { "operation": "import/upload" },
+                "task-1": { "operation": "convert", "input": ["import-1"], "output_format": "docx" },
+                "export-1": { "operation": "export/url", "input": ["task-1"] }
+            }
         });
-    } catch (e) {
-        return response(500, e.message, "Error", res);
+
+        const uploadTask = job.tasks.filter(t => t.name === 'import-1')[0];
+        await cloudConvert.tasks.upload(uploadTask, fs.createReadStream(inputPath), req.file.filename);
+
+        const finishedJob = await cloudConvert.jobs.wait(job.id);
+        const exportTask = finishedJob.tasks.filter(t => t.operation === 'export/url' && t.status === 'finished')[0];
+        const cloudUrl = exportTask.result.files[0].url;
+
+        const file = fs.createWriteStream(outputPath);
+        https.get(cloudUrl, (resStream) => {
+            resStream.pipe(file);
+            file.on('finish', () => {
+                file.close();
+                if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
+                response(200, { url_download: `${BASE_URL}/uploads/${outputName}` }, "Konversi Berhasil", res);
+
+                setTimeout(() => { 
+                    if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); 
+                }, 3600000);
+            });
+        });
+    } catch (err) {
+        response(500, err.message, "Gagal Konversi Cloud", res);
     }
 };
