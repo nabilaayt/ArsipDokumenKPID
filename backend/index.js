@@ -10,22 +10,32 @@ const authRoutes = require('./routes/authRoutes');
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'https://arsipkpidsumsel.com');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', 'true');
+
+    if(req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    next();
+});
+
 app.use(cors({
     origin: 'https://arsipkpidsumsel.com',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
-    optionsSuccessStatus: 204,
+    // optionsSuccessStatus: 204,
 }));
 
-app.options('*', cors());
+// app.options('*', cors());
 
 // PENTING: Tambahkan limit 200mb pada body-parser
 app.use(bodyParser.json({ limit: '200mb' }));
 app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
-
-// Static frontend
-// app.use(express.static(path.join(__dirname, '../public_html')));
 
 // Uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -48,7 +58,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use((req, res) => {
-    res.status(404).json({ message: "Endpoint tidak ditemukan!" });
+    res.status(404).json({ message: "Endpoint tidak ditemukan!" } + req.url);
 });
 
 app.listen(port, () => {
