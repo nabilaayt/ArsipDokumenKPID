@@ -5,11 +5,13 @@ const path = require('path');
 const fs = require('fs');
 const { exec } = require('child_process');
 
-const cloudConvert = new CloudConvert(process.env.CLOUDCONVERT_API_KEY);
 const CloudConvert = require('cloudconvert');
+const cloudConvert = new CloudConvert(process.env.CLOUDCONVERT_API_KEY);
+
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
+
 const BASE_URL = 'https://api.arsipkpidsumsel.com';
 
 // CRUD DOKUMEN
