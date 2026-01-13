@@ -1,8 +1,6 @@
 const db = require('../config/db');
 const response = require('../response');
 
-const path = require('path');
-const fs = require('fs');
 const { exec } = require('child_process');
 
 const CloudConvert = require('cloudconvert');
